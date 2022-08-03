@@ -8,11 +8,124 @@ generator client {
   binaryTargets = "native"
 }
 
-// Define your own datamodels here and run `yarn redwood prisma migrate dev`
-// to create migrations for them and apply to your dev DB.
-// TODO: Please remove the following example:
-model UserExample {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+model Account {
+  id       String @id @default(cuid())
+  name     String
+  users    User[]
+  settings String @default("{}")
+
+  mediavaletRefreshToken  String?
+  mediavaletToken         String?
+  mediavaletTokenExpiry   String?
+
+  docusignAuthToken       String?
+  docusignAuthTokenExpiry String?
+}
+
+model User {
+  id                       String                    @id @default(cuid())
+  name                     String
+  email                    String                    @unique
+  role                     Int                       @default(1)
+  account                  Account                   @relation(fields: [accountId], references: [id])
+  accountId                String
+  CameraTrapBatchApprovals CameraTrapBatchApproval[]
+  hashedPassword           String
+  salt                     String
+  resetToken               String?
+  resetTokenExpiresAt      DateTime?
+}
+
+model CameraTrap {
+  id        String            @id @default(cuid())
+  deviceId  String            @unique
+  batches   CameraTrapBatch[]
+  events    CameraTrapEvent[]
+  photos    Photo[]
+}
+
+model CameraTrapEvent {
+  id   String   @id @default(cuid())
+  date DateTime
+
+  cameraTrap   CameraTrap @relation(fields: [cameraTrapId], references: [id])
+  cameraTrapId String
+
+  projectName String? @default("-")
+  staffName   String? @default("-")
+
+  datetime_updated DateTime
+  cameraLocation   String
+  cameraProcedure  String
+  //    battery_memory_replacement
+  //    camera_moved
+  //    camera_removed
+  //    camera_stolen
+  // 	  camera_other_update
+
+  cameraAttachmentPosition String?
+  //    tree
+  // 	  post
+  // 	  other_position
+
+  cameraHeight Decimal?
+  areaDeployed String?
+  cameraMake   String?
+  // 	  ·   Browning browning
+  // 	  ·   Bushnell bushnell
+  // 	  ·   Cuddeback cuddeback
+  // 	  ·   Moultrie moultrie
+  // 	  ·   Reconyx reconyx
+  // 	  ·   Spypoint spypoint
+  // 	  ·   Other camera_make_other String
+
+  cameraTarget String?
+  // 	  ·   Wildlife trail Wildlife trail
+  // 	  ·   Wildlife feeding area Wildlife feeding area
+  // 	  ·   Rubbing posts Rubbing posts
+  // 	  ·   Water hole Water hole
+  // 	  ·   Human trail Human trail
+  // 	  ·   Road _Road
+  // 	  ·   Other other_feature String
+
+  cameraSitePhoto String?
+  cameraWorking   Boolean
+  comments        String?
+}
+
+model CameraTrapBatch {
+  id        String   @id @default(cuid())
+  dateStart DateTime
+  dateEnd   DateTime
+
+  cameraTrap   CameraTrap @relation(fields: [cameraTrapId], references: [id])
+  cameraTrapId String
+
+  photos Photo[]
+
+  location                 String
+  cameraTrapBatchApprovals CameraTrapBatchApproval[]
+  status                   String                    @default("approval")
+}
+
+model CameraTrapBatchApproval {
+  id              String          @id @default(cuid())
+  userId          String
+  user            User            @relation(fields: [userId], references: [id])
+  batchId         String
+  cameraTrapBatch CameraTrapBatch @relation(fields: [batchId], references: [id])
+  approvedImages  String
+  rejectedImages  String
+}
+
+model Photo {
+  id   String   @id @default(cuid())
+  date DateTime
+
+  cameraTrap   CameraTrap @relation(fields: [cameraTrapId], references: [id])
+  cameraTrapId String
+
+  cameraTrapBatch   CameraTrapBatch? @relation(fields: [cameraTrapBatchId], references: [id])
+  cameraTrapBatchId String
+  url               String
 }
