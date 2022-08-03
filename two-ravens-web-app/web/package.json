@@ -13,11 +13,17 @@
     ]
   },
   "dependencies": {
+    "@adobe/react-spectrum": "^3.20.0",
     "@redwoodjs/forms": "2.2.0",
     "@redwoodjs/router": "2.2.0",
     "@redwoodjs/web": "2.2.0",
+    "@spectrum-icons/illustrations": "^3.3.1",
+    "@spectrum-icons/ui": "^3.3.1",
+    "@spectrum-icons/workflow": "^4.0.1",
     "prop-types": "15.8.1",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-aria": "^3.18.0",
+    "react-dom": "17.0.2",
+    "react-stately": "^3.16.0"
   }
 }
