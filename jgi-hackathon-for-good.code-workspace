@@ -1,0 +1,25 @@
+{
+	"folders": [
+		{
+      "name": "DOCS",
+			"path": "./docs"
+		},
+    {
+      "name": "WEB",
+      "path": "./two-ravens-web-app/web"
+    },
+    {
+      "name": "API",
+      "path": "./two-ravens-web-app/api"
+    },
+    {
+      "name": "ALL",
+      "path": ".",
+
+    }
+	],
+	"settings": {
+    "prettier.configPath": "./prettier.config.js",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  }
+}
