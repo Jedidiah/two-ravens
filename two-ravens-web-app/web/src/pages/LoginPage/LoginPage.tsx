@@ -24,9 +24,6 @@ const LoginPage = () => {
   }, [isAuthenticated]);
 
   const usernameRef = useRef<HTMLInputElement>();
-  useEffect(() => {
-    usernameRef.current.focus();
-  }, []);
 
   const onSubmit = async (data) => {
     const response = await logIn({ ...data });
@@ -60,7 +57,7 @@ const LoginPage = () => {
                     className="rw-label"
                     errorClassName="rw-label rw-label-error"
                   >
-                    Username
+                    Email
                   </Label>
                   <TextField
                     name="username"
