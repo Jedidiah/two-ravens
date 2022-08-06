@@ -1,9 +1,9 @@
-import { Link, routes } from '@redwoodjs/router'
-import { Toaster } from '@redwoodjs/web/toast'
+import { Link, routes } from '@redwoodjs/router';
+import { Toaster } from '@redwoodjs/web/toast';
 
 type CameraTrapBatchLayoutProps = {
-  children: React.ReactNode
-}
+  children: React.ReactNode;
+};
 
 const CameraTrapBatchesLayout = ({ children }: CameraTrapBatchLayoutProps) => {
   return (
@@ -11,10 +11,7 @@ const CameraTrapBatchesLayout = ({ children }: CameraTrapBatchLayoutProps) => {
       <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
       <header className="rw-header">
         <h1 className="rw-heading rw-heading-primary">
-          <Link
-            to={routes.cameraTrapBatches()}
-            className="rw-link"
-          >
+          <Link to={routes.cameraTrapBatches()} className="rw-link">
             CameraTrapBatches
           </Link>
         </h1>
@@ -22,12 +19,12 @@ const CameraTrapBatchesLayout = ({ children }: CameraTrapBatchLayoutProps) => {
           to={routes.newCameraTrapBatch()}
           className="rw-button rw-button-green"
         >
-          <div className="rw-button-icon">+</div> New CameraTrapBatch
+          <div className="rw-button-icon">+</div> New Camera Trap Batch
         </Link>
       </header>
       <main className="rw-main">{children}</main>
     </div>
-  )
-}
+  );
+};
 
-export default CameraTrapBatchesLayout
+export default CameraTrapBatchesLayout;

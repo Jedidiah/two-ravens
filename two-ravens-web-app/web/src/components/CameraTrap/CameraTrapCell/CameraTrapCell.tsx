@@ -1,8 +1,8 @@
-import type { FindCameraTrapById } from 'types/graphql'
+import type { FindCameraTrapById } from 'types/graphql';
 
-import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
+import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web';
 
-import CameraTrap from 'src/components/CameraTrap/CameraTrap'
+import CameraTrap from 'src/components/CameraTrap/CameraTrap';
 
 export const QUERY = gql`
   query FindCameraTrapById($id: String!) {
@@ -11,16 +11,18 @@ export const QUERY = gql`
       deviceId
     }
   }
-`
+`;
 
-export const Loading = () => <div>Loading...</div>
+export const Loading = () => <div>Loading...</div>;
 
-export const Empty = () => <div>CameraTrap not found</div>
+export const Empty = () => <div>Camera Trap not found</div>;
 
 export const Failure = ({ error }: CellFailureProps) => (
   <div className="rw-cell-error">{error.message}</div>
-)
+);
 
-export const Success = ({ cameraTrap }: CellSuccessProps<FindCameraTrapById>) => {
-  return <CameraTrap cameraTrap={cameraTrap} />
-}
+export const Success = ({
+  cameraTrap,
+}: CellSuccessProps<FindCameraTrapById>) => {
+  return <CameraTrap cameraTrap={cameraTrap} />;
+};
