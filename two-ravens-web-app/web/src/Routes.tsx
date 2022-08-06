@@ -25,6 +25,11 @@ const Routes = () => {
         <Route path="/reset-password" page={ResetPasswordPage} name="resetPassword" />
         <Route path="/" page={HomePage} name="home" />
         <Private unauthenticated="login">
+          <Route path="/oauth/callback/docusign" page={OauthCallbackDocusignPage} name="oauthCallbackDocusign" />
+          <Route path="/oauth/callback/mediavalet" page={OauthCallbackMediavaletPage} name="oauthCallbackMediavalet" />
+          <Route path="/settings" page={SettingsPage} name="settings" />
+          <Route path="/integrations" page={IntegrationsPage} name="integrations" />
+
           <Set wrap={CameraTrapEventsLayout}>
             <Route path="/camera-trap-events/new" page={CameraTrapEventNewCameraTrapEventPage} name="newCameraTrapEvent" />
             <Route path="/camera-trap-events/{id}/edit" page={CameraTrapEventEditCameraTrapEventPage} name="editCameraTrapEvent" />

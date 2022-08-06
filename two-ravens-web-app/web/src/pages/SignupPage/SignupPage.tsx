@@ -1,5 +1,7 @@
-import { Link, navigate, routes } from '@redwoodjs/router'
-import { useRef } from 'react'
+import { useRef } from 'react';
+import { useEffect } from 'react';
+
+import { useAuth } from '@redwoodjs/auth';
 import {
   Form,
   Label,
@@ -7,39 +9,38 @@ import {
   PasswordField,
   FieldError,
   Submit,
-} from '@redwoodjs/forms'
-import { useAuth } from '@redwoodjs/auth'
-import { MetaTags } from '@redwoodjs/web'
-import { toast, Toaster } from '@redwoodjs/web/toast'
-import { useEffect } from 'react'
+} from '@redwoodjs/forms';
+import { Link, navigate, routes } from '@redwoodjs/router';
+import { MetaTags } from '@redwoodjs/web';
+import { toast, Toaster } from '@redwoodjs/web/toast';
 
 const SignupPage = () => {
-  const { isAuthenticated, signUp } = useAuth()
+  const { isAuthenticated, signUp } = useAuth();
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(routes.home())
+      navigate(routes.home());
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated]);
 
   // focus on email box on page load
-  const usernameRef = useRef<HTMLInputElement>()
+  const usernameRef = useRef<HTMLInputElement>();
   useEffect(() => {
-    usernameRef.current.focus()
-  }, [])
+    usernameRef.current.focus();
+  }, []);
 
   const onSubmit = async (data) => {
-    const response = await signUp({ ...data })
+    const response = await signUp({ ...data });
 
     if (response.message) {
-      toast(response.message)
+      toast(response.message);
     } else if (response.error) {
-      toast.error(response.error)
+      toast.error(response.error);
     } else {
       // user is signed in automatically
-      toast.success('Welcome!')
+      toast.success('Welcome!');
     }
-  }
+  };
 
   return (
     <>
@@ -99,7 +100,9 @@ const SignupPage = () => {
                   <FieldError name="password" className="rw-field-error" />
 
                   <div className="rw-button-group">
-                    <Submit className="rw-button rw-button-blue">Sign Up</Submit>
+                    <Submit className="rw-button rw-button-blue">
+                      Sign Up
+                    </Submit>
                   </div>
                 </Form>
               </div>
@@ -114,7 +117,7 @@ const SignupPage = () => {
         </div>
       </main>
     </>
-  )
-}
+  );
+};
 
-export default SignupPage
+export default SignupPage;

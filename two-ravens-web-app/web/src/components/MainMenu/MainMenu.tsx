@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import {
   ActionMenu,
   Grid,
@@ -9,11 +11,39 @@ import {
 import User from '@spectrum-icons/workflow/User';
 
 import { CurrentUser, useAuth } from '@redwoodjs/auth';
-import { NavLink, routes } from '@redwoodjs/router';
+import { navigate, NavLink, routes } from '@redwoodjs/router';
 
 import './MainMenu.scss';
 
 const AuthenticatedMainMenu = (props: { user: CurrentUser }) => {
+  const { logOut } = useAuth();
+  const handleDropdownSelection = useCallback(
+    (key: string) => {
+      switch (key) {
+        case 'org-users': {
+          navigate(routes.home());
+          break;
+        }
+
+        case 'org-integrations': {
+          navigate(routes.integrations());
+          break;
+        }
+
+        case 'org-settings': {
+          navigate(routes.settings());
+          break;
+        }
+
+        case 'logout': {
+          logOut();
+          break;
+        }
+      }
+    },
+    [logOut]
+  );
+
   return (
     <Grid
       width="100%"
@@ -40,21 +70,21 @@ const AuthenticatedMainMenu = (props: { user: CurrentUser }) => {
           to={routes.home()}
         >
           Explore Map
-        </NavLink>{' '}
+        </NavLink>
         <NavLink
           className="main-menu__link"
           activeClassName="main-menu__link--active"
           to={routes.cameraTraps()}
         >
           Camera Traps
-        </NavLink>{' '}
+        </NavLink>
         <NavLink
           className="main-menu__link"
           activeClassName="main-menu__link--active"
           to={routes.cameraTrapBatches()}
         >
           Photo Batches
-        </NavLink>{' '}
+        </NavLink>
       </View>
       <View></View>
       <View>
@@ -67,7 +97,12 @@ const AuthenticatedMainMenu = (props: { user: CurrentUser }) => {
             <User /> {props.user.email}
           </Text>
         </NavLink>
-        <ActionMenu alignSelf="center" position="absolute" marginTop="-3px">
+        <ActionMenu
+          onAction={handleDropdownSelection}
+          alignSelf="center"
+          position="absolute"
+          marginTop="-3px"
+        >
           <Section title="Organisation">
             <Item key="org-users">Users</Item>
             <Item key="org-integrations">Integrations</Item>

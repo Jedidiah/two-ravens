@@ -34,6 +34,14 @@ export const updateAccount: MutationResolvers['updateAccount'] = ({
   });
 };
 
+// export const updateAccountMediavaletStatus: MutationResolvers['updateAccountMediavaletStatus'] =
+//   ({ id, input }) => {
+//     return db.account.update({
+//       data: input,
+//       where: { id },
+//     });
+//   };
+
 export const deleteAccount: MutationResolvers['deleteAccount'] = ({ id }) => {
   return db.account.delete({
     where: { id },

@@ -14,12 +14,16 @@ model Account {
   users    User[]
   settings String @default("{}")
 
+  mediavaletIntegrationStatus String? @default("unconnected")
   mediavaletRefreshToken  String?
   mediavaletToken         String?
   mediavaletTokenExpiry   String?
 
+  docusignIntegrationStatus String? @default("unconnected")
   docusignAuthToken       String?
   docusignAuthTokenExpiry String?
+
+  esriIntegrationStatus String? @default("unconnected")
 }
 
 model User {
