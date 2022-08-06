@@ -15,13 +15,15 @@ model Account {
   settings String @default("{}")
 
   mediavaletIntegrationStatus String? @default("unconnected")
-  mediavaletRefreshToken  String?
-  mediavaletToken         String?
-  mediavaletTokenExpiry   String?
+  mediavaletRefreshToken      String?
+  mediavaletToken             String?
+  mediavaletTokenExpiry       String?
+  mediavaletRootCategoryId    String? @unique
+
 
   docusignIntegrationStatus String? @default("unconnected")
-  docusignAuthToken       String?
-  docusignAuthTokenExpiry String?
+  docusignAuthToken         String?
+  docusignAuthTokenExpiry   String?
 
   esriIntegrationStatus String? @default("unconnected")
 }
@@ -41,11 +43,15 @@ model User {
 }
 
 model CameraTrap {
-  id        String            @id @default(cuid())
-  deviceId  String            @unique
-  batches   CameraTrapBatch[]
-  events    CameraTrapEvent[]
-  photos    Photo[]
+  id       String            @id @default(cuid())
+  deviceId String            @unique
+  batches  CameraTrapBatch[]
+  events   CameraTrapEvent[]
+  photos   Photo[]
+
+  // mediavaletCategory          MediavaletCategory? @relation(fields: [mediavaletCategoryId], references: [id])
+  mediavaletCategoryId        String?             @unique
+  mediavaletDownloadsFolderId String?             @unique
 }
 
 model CameraTrapEvent {
@@ -105,6 +111,9 @@ model CameraTrapBatch {
   cameraTrap   CameraTrap @relation(fields: [cameraTrapId], references: [id])
   cameraTrapId String
 
+  // mediavaletCategory   MediavaletCategory? @relation(fields: [mediavaletCategoryId], references: [id])
+  mediavaletCategoryId String?             @unique
+
   photos Photo[]
 
   location                 String
@@ -131,5 +140,30 @@ model Photo {
 
   cameraTrapBatch   CameraTrapBatch? @relation(fields: [cameraTrapBatchId], references: [id])
   cameraTrapBatchId String
-  url               String
+
+  assetId String?          @unique
+  // asset   MediavaletAsset? @relation(fields: [assetId], references: [id])
 }
+
+// model MediavaletAsset {
+//   id           String  @id
+//   title        String  @default("")
+//   thumb        String
+//   small        String
+//   medium       String
+//   large        String
+//   original     String
+//   categories   String? @default("")
+//   description  String? @default("")
+//   altText      String? @default("")
+//   dateCaptured String?
+//   photo        Photo?
+// }
+
+// model MediavaletCategory {
+//   id         String           @id
+//   name       String
+//   parentId   String
+//   batch      CameraTrapBatch?
+//   cameraTrap CameraTrap?
+// }

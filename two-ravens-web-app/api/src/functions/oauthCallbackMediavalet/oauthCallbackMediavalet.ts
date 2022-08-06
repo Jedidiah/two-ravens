@@ -44,7 +44,7 @@ const handlerFn = async (event: APIGatewayEvent, context: Context) => {
       grant_type: 'authorization_code',
       code,
       client_id: process.env['MEDIAVALET_CLIENT_ID'],
-      redirect_uri: 'https://ravens.ursaluna.studio/oauth/callback/mediavalet',
+      redirect_uri: process.env['MEDIAVALET_CALLBACK_URL'],
     };
 
     const tokenResponse = await fetch(
@@ -62,7 +62,7 @@ const handlerFn = async (event: APIGatewayEvent, context: Context) => {
         },
         body: stringify(params),
         cache: 'no-cache',
-        referrer: 'https://ravens.ursaluna.studio/',
+        referrer: process.env['MEDIAVALET_CALLBACK_URL'],
       }
     );
 
@@ -80,6 +80,7 @@ const handlerFn = async (event: APIGatewayEvent, context: Context) => {
         mediavaletRefreshToken: refresh_token,
         mediavaletToken: access_token,
         mediavaletTokenExpiry: String(Date.now() + Number(expires_in)),
+        mediavaletIntegrationStatus: 'connected',
       },
     });
 
@@ -89,10 +90,7 @@ const handlerFn = async (event: APIGatewayEvent, context: Context) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        data: 'oauthCallbackMediavalet function',
-        mediavaletRefreshToken: refresh_token,
-        mediavaletToken: access_token,
-        mediavaletTokenExpiry: Date.now() + Number(expires_in),
+        success: true,
       }),
     };
   } catch (error) {
@@ -102,7 +100,7 @@ const handlerFn = async (event: APIGatewayEvent, context: Context) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        data: 'oauthCallbackMediavalet function',
+        success: false,
         error: String(error),
       }),
     };
@@ -110,11 +108,3 @@ const handlerFn = async (event: APIGatewayEvent, context: Context) => {
 };
 
 export const handler = useRequireAuth({ handlerFn, getCurrentUser });
-
-//   https://login.mediavalet.com/connect/authorize?response_type=code&client_id=7f495f1f-21dc-4f9b-9071-4b56e5375e9f&scope=api%20offline_access&redirect_uri=https://ravens.ursaluna.studio/oauth/callback/mediavalet
-
-// https://ravens.ursaluna.studio/
-//    ?code=vurvcYJSs9JVH4xYVxQD-tDXSCVZhzlG9292vPe5F40
-//    &scope=api%20offline_access
-//    &session_state=SXwvPq2QMfyfHuRbqql8tro7fWRpKhKlgKm0xtjyGaY.DwUFH4CQgMazf9iwgoq5FQ
-// oauthCallbackMediavalet?code=eP3QV-o7tGhk7sR4vcKEbDI_A7D2xJHhSCPMjrAKev8&scope=api offline_access

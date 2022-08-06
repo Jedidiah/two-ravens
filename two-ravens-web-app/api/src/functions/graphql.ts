@@ -6,10 +6,13 @@ import { db } from 'src/lib/db'
 import { logger } from 'src/lib/logger'
 import services from 'src/services/**/*.{js,ts}'
 
+import generateGraphiQLHeader from 'src/lib/generateGraphiQLHeader'
+
 import { getCurrentUser } from 'src/lib/auth'
 
 export const handler = createGraphQLHandler({
   getCurrentUser,
+  generateGraphiQLHeader,
   loggerConfig: { logger, options: {} },
   directives,
   sdls,

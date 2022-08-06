@@ -9877,6 +9877,7 @@ __metadata:
     "@redwoodjs/api": 2.2.0
     "@redwoodjs/graphql-server": 2.2.0
     cross-undici-fetch: ^0.4.14
+    date-fns: ^2.29.1
     query-string: ^7.1.1
   languageName: unknown
   linkType: soft
@@ -12902,7 +12903,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"date-fns@npm:^2.0.1, date-fns@npm:^2.16.1":
+"date-fns@npm:^2.0.1, date-fns@npm:^2.16.1, date-fns@npm:^2.29.1":
   version: 2.29.1
   resolution: "date-fns@npm:2.29.1"
   checksum: 9d6eabcfd5b2c8d8179baaa37a3f7248092d3c3ab1f37994270ea3f3aaf88419991e67c4bfcea4816492ddb2b7a31e106ff70e6089ae881f153d5fd2ef80874c
