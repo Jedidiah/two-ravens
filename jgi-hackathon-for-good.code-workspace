@@ -1,27 +1,18 @@
 {
-	"folders": [
-		{
+  "folders": [
+    {
       "name": "DOCS",
-			"path": "./docs"
-		},
-    {
-      "name": "WEB",
-      "path": "./two-ravens-web-app/web"
+      "path": "./docs"
     },
     {
-      "name": "API",
-      "path": "./two-ravens-web-app/api"
-    },
-    {
-      "name": "ALL",
-      "path": ".",
-
+      "name": "WEBAPP",
+      "path": "./two-ravens-web-app"
     }
-	],
-	"settings": {
+  ],
+  "settings": {
     "prettier.configPath": "./prettier.config.js",
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
-    "editor.formatOnPaste": true,
+    "editor.formatOnPaste": true
   }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import {
   Content,
@@ -7,15 +7,13 @@ import {
   Divider,
   Header,
   Heading,
-  IllustratedMessage,
   ProgressCircle,
   Text,
 } from '@adobe/react-spectrum';
-import Upload from '@spectrum-icons/illustrations/Timeout';
 import { parse } from 'query-string';
 
 import { useAuth } from '@redwoodjs/auth';
-import { Link, navigate, routes } from '@redwoodjs/router';
+import { navigate, routes } from '@redwoodjs/router';
 import { MetaTags } from '@redwoodjs/web';
 import { toast } from '@redwoodjs/web/dist/toast';
 

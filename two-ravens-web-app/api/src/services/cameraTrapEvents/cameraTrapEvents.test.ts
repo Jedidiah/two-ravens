@@ -36,26 +36,24 @@ describe('cameraTrapEvents', () => {
     }
   );
 
-  scenario('creates a cameraTrapEvent', async (scenario: StandardScenario) => {
+  scenario('creates a cameraTrapEvent', async () => {
     const result = await createCameraTrapEvent({
       input: {
-        date: '2022-08-03T22:14:16Z',
-        cameraTrapId: scenario.cameraTrapEvent.two.cameraTrapId,
-        datetime_updated: '2022-08-03T22:14:16Z',
         cameraLocation: 'String',
         cameraProcedure: 'String',
         cameraWorking: true,
+        date: '2022-08-08T01:19:03Z',
+        datetimeUpdated: '2022-08-08T01:19:03Z',
+        deviceId: 'String',
       },
     });
 
-    expect(result.date).toEqual('2022-08-03T22:14:16Z');
-    expect(result.cameraTrapId).toEqual(
-      scenario.cameraTrapEvent.two.cameraTrapId
-    );
-    expect(result.datetime_updated).toEqual('2022-08-03T22:14:16Z');
     expect(result.cameraLocation).toEqual('String');
     expect(result.cameraProcedure).toEqual('String');
     expect(result.cameraWorking).toEqual(true);
+    expect(result.date).toEqual('2022-08-08T01:19:03Z');
+    expect(result.datetimeUpdated).toEqual('2022-08-08T01:19:03Z');
+    expect(result.deviceId).toEqual('String');
   });
 
   scenario('updates a cameraTrapEvent', async (scenario: StandardScenario) => {
@@ -64,10 +62,10 @@ describe('cameraTrapEvents', () => {
     });
     const result = await updateCameraTrapEvent({
       id: original.id,
-      input: { date: '2022-08-04T22:14:16Z' },
+      input: { cameraLocation: 'String2' },
     });
 
-    expect(result.date).toEqual('2022-08-04T22:14:16Z');
+    expect(result.cameraLocation).toEqual('String2');
   });
 
   scenario('deletes a cameraTrapEvent', async (scenario: StandardScenario) => {

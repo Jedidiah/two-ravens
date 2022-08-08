@@ -5,9 +5,6 @@ import { db } from 'src/lib/db';
 import { mediavaletApi } from 'src/lib/mediavaletAuth';
 import { logger } from 'src/lib/logger';
 
-// Hardcoded here for the hackathon as all users are in one account and we've agreed to make a root category each
-const ROOT_CATEGORY = '02476362-502f-4cd4-9f2e-9aea32ee2a15';
-
 function formatCategory(
   category: { id?: string; name?: string; parentId?: string } = {}
 ) {
@@ -19,7 +16,7 @@ export const mediavaletCameraTrapCategories: QueryResolvers['mediavaletCameraTra
   async () => {
     const response = await mediavaletApi(
       'GET',
-      `/categories/${ROOT_CATEGORY}/subcategories`
+      `/categories/${process.env['MEDIAVALET_ROOT_FOLDER_ID']}/subcategories`
     );
     if (response.error) return [];
 
@@ -36,6 +33,7 @@ export const mediavaletCategory: QueryResolvers['mediavaletCategory'] = async ({
 
 export const createMediavaletCategory: MutationResolvers['createMediavaletCategory'] =
   async ({ input }) => {
+    logger.info(JSON.stringify(input));
     const response = await mediavaletApi(
       'POST',
       `/categories`,

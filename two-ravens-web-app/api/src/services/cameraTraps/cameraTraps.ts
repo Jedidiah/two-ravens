@@ -16,6 +16,13 @@ export const cameraTrap: QueryResolvers['cameraTrap'] = ({ id }) => {
   });
 };
 
+export const cameraTrapFromDeviceId: QueryResolvers['cameraTrapFromDeviceId'] =
+  ({ deviceId }) => {
+    return db.cameraTrap.findUnique({
+      where: { deviceId },
+    });
+  };
+
 export const createCameraTrap: MutationResolvers['createCameraTrap'] = ({
   input,
 }) => {
@@ -46,7 +53,9 @@ export const CameraTrap: CameraTrapResolvers = {
   batches: (_obj, { root }) =>
     db.cameraTrap.findUnique({ where: { id: root.id } }).batches(),
   events: (_obj, { root }) =>
-    db.cameraTrap.findUnique({ where: { id: root.id } }).events(),
+    db.cameraTrap
+      .findUnique({ where: { id: root.id } })
+      .events({ orderBy: { datetimeUpdated: 'desc' } }),
   photos: (_obj, { root }) =>
     db.cameraTrap.findUnique({ where: { id: root.id } }).photos(),
 };

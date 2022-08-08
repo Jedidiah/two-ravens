@@ -10,6 +10,17 @@ export const QUERY = gql`
     cameraTraps {
       id
       deviceId
+      manufacturer
+      project
+      batches {
+        id
+      }
+      events {
+        id
+      }
+      photos {
+        id
+      }
     }
   }
 `;

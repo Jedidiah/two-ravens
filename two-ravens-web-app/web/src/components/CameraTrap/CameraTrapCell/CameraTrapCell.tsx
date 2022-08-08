@@ -9,6 +9,38 @@ export const QUERY = gql`
     cameraTrap: cameraTrap(id: $id) {
       id
       deviceId
+      manufacturer
+      project
+      batches {
+        id
+      }
+      events {
+        areaDeployed
+        cameraAttachmentPosition
+        cameraHeight
+        cameraLocation
+        cameraMake
+        cameraProcedure
+        cameraSitePhoto
+        cameraTarget
+        cameraWorking
+        comments
+        date
+        datetimeUpdated
+        deviceId
+        gisLink
+        id
+        projectName
+        staffName
+        userEmail
+        userFullname
+        userUsername
+      }
+      photos {
+        id
+      }
+      mediavaletCategoryId
+      mediavaletDownloadsFolderId
     }
   }
 `;

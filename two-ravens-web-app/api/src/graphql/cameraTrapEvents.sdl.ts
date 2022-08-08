@@ -1,22 +1,27 @@
 export const schema = gql`
   type CameraTrapEvent {
-    id: String!
-    date: DateTime!
-    cameraTrap: CameraTrap!
-    cameraTrapId: String!
-    projectName: String
-    staffName: String
-    datetime_updated: DateTime!
-    cameraLocation: String!
-    cameraProcedure: String!
+    areaDeployed: String
     cameraAttachmentPosition: String
     cameraHeight: Float
-    areaDeployed: String
+    cameraLocation: String!
     cameraMake: String
-    cameraTarget: String
+    cameraProcedure: String!
     cameraSitePhoto: String
+    cameraTarget: String
+    cameraTrap: CameraTrap
+    cameraTrapId: String
     cameraWorking: Boolean!
     comments: String
+    date: DateTime!
+    datetimeUpdated: DateTime!
+    deviceId: String!
+    gisLink: String
+    id: String!
+    projectName: String
+    staffName: String
+    userEmail: String
+    userFullname: String
+    userUsername: String
   }
 
   type Query {
@@ -25,39 +30,49 @@ export const schema = gql`
   }
 
   input CreateCameraTrapEventInput {
-    date: DateTime!
-    cameraTrapId: String!
-    projectName: String
-    staffName: String
-    datetime_updated: DateTime!
-    cameraLocation: String!
-    cameraProcedure: String!
+    areaDeployed: String
     cameraAttachmentPosition: String
     cameraHeight: Float
-    areaDeployed: String
+    cameraLocation: String!
     cameraMake: String
-    cameraTarget: String
+    cameraProcedure: String!
     cameraSitePhoto: String
+    cameraTarget: String
+    cameraTrapId: String
     cameraWorking: Boolean!
     comments: String
+    date: DateTime!
+    datetimeUpdated: DateTime!
+    deviceId: String!
+    gisLink: String
+    projectName: String
+    staffName: String
+    userEmail: String
+    userFullname: String
+    userUsername: String
   }
 
   input UpdateCameraTrapEventInput {
-    date: DateTime
-    cameraTrapId: String
-    projectName: String
-    staffName: String
-    datetime_updated: DateTime
-    cameraLocation: String
-    cameraProcedure: String
+    areaDeployed: String
     cameraAttachmentPosition: String
     cameraHeight: Float
-    areaDeployed: String
+    cameraLocation: String
     cameraMake: String
-    cameraTarget: String
+    cameraProcedure: String
     cameraSitePhoto: String
+    cameraTarget: String
+    cameraTrapId: String
     cameraWorking: Boolean
     comments: String
+    date: DateTime
+    datetimeUpdated: DateTime
+    deviceId: String
+    gisLink: String
+    projectName: String
+    staffName: String
+    userEmail: String
+    userFullname: String
+    userUsername: String
   }
 
   type Mutation {

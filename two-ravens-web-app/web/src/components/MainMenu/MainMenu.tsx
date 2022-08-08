@@ -4,6 +4,7 @@ import {
   ActionMenu,
   Grid,
   Item,
+  Provider,
   Section,
   Text,
   View,
@@ -94,7 +95,7 @@ const AuthenticatedMainMenu = (props: { user: CurrentUser }) => {
           to={routes.home()}
         >
           <Text>
-            <User /> {props.user.email}
+            <User /> {props?.user?.email}
           </Text>
         </NavLink>
         <ActionMenu
@@ -155,9 +156,17 @@ const UnAuthenticatedMainMenu = () => {
 const MainMenu = () => {
   const auth = useAuth();
   if (auth.isAuthenticated) {
-    return <AuthenticatedMainMenu user={auth.currentUser} />;
+    return (
+      <Provider height="100%" colorScheme="dark">
+        <AuthenticatedMainMenu user={auth.currentUser} />
+      </Provider>
+    );
   }
-  return <UnAuthenticatedMainMenu />;
+  return (
+    <Provider height="100%" colorScheme="dark">
+      <UnAuthenticatedMainMenu />
+    </Provider>
+  );
 };
 
 export default MainMenu;

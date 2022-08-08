@@ -1,17 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <!-- Load Leaflet from CDN -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+      crossorigin=""
+    />
+    <script
+      async
+      src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+      crossorigin=""
+    ></script>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/png" href="/favicon.png" />
-</head>
+    <!-- Load Esri Leaflet from CDN -->
+    <script
+      async
+      src="https://unpkg.com/esri-leaflet@^3.0.8/dist/esri-leaflet.js"
+    ></script>
+    <script
+      async
+      src="https://unpkg.com/esri-leaflet-vector@3.1.3/dist/esri-leaflet-vector.js"
+    ></script>
+  </head>
 
-<body>
-  <div id="redwood-app">
-    <!-- Please keep the line below for prerender support. -->
-    <%= prerenderPlaceholder %>
-  </div>
-</body>
-
+  <body>
+    <div id="redwood-app">
+      <!-- Please keep the line below for prerender support. -->
+      <%= prerenderPlaceholder %>
+    </div>
+  </body>
 </html>

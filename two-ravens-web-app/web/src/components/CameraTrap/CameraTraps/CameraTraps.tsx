@@ -1,10 +1,32 @@
+import { useCallback } from 'react';
+
+import {
+  ActionButton,
+  ActionGroup,
+  Breadcrumbs,
+  Flex,
+  Grid,
+  Heading,
+  Item,
+  repeat,
+  StatusLight,
+  Text,
+  View,
+  Well,
+} from '@adobe/react-spectrum';
+import Add from '@spectrum-icons/workflow/Add';
+import Camera from '@spectrum-icons/workflow/Camera';
+import CameraRefresh from '@spectrum-icons/workflow/CameraRefresh';
 import humanize from 'humanize-string';
 
-import { Link, routes } from '@redwoodjs/router';
+import { Link, navigate, routes } from '@redwoodjs/router';
 import { useMutation } from '@redwoodjs/web';
 import { toast } from '@redwoodjs/web/toast';
 
 import { QUERY } from 'src/components/CameraTrap/CameraTrapsCell';
+import Delete from '@spectrum-icons/workflow/Delete';
+import ImageCheck from '@spectrum-icons/workflow/ImageCheck';
+import Article from '@spectrum-icons/workflow/Article';
 
 const DELETE_CAMERA_TRAP_MUTATION = gql`
   mutation DeleteCameraTrapMutation($id: String!) {
@@ -74,51 +96,90 @@ const CameraTrapsList = ({ cameraTraps }) => {
     }
   };
 
+  const onAddNewClick = useCallback(() => {
+    navigate(routes.newCameraTrap());
+  }, []);
+
+  const onActionPress = useCallback((key: string) => {
+    if (key.startsWith('view-')) {
+      const id = key.replace('view-', '');
+      navigate(routes.cameraTrap({ id }));
+    }
+    if (key.startsWith('viewBatches-')) {
+      const id = key.replace('viewBatches-', '');
+      navigate(routes.cameraTrapBatches({ cameraId: id }));
+    }
+  }, []);
+
   return (
-    <div className="rw-segment rw-table-wrapper-responsive">
-      <table className="rw-table">
-        <thead>
-          <tr>
-            <th>Id</th>
-            <th>Device id</th>
-            <th>&nbsp;</th>
-          </tr>
-        </thead>
-        <tbody>
-          {cameraTraps.map((cameraTrap) => (
-            <tr key={cameraTrap.id}>
-              <td>{truncate(cameraTrap.id)}</td>
-              <td>{truncate(cameraTrap.deviceId)}</td>
-              <td>
-                <nav className="rw-table-actions">
-                  <Link
-                    to={routes.cameraTrap({ id: cameraTrap.id })}
-                    title={'Show cameraTrap ' + cameraTrap.id + ' detail'}
-                    className="rw-button rw-button-small"
-                  >
-                    Show
-                  </Link>
-                  <Link
-                    to={routes.editCameraTrap({ id: cameraTrap.id })}
-                    title={'Edit cameraTrap ' + cameraTrap.id}
-                    className="rw-button rw-button-small rw-button-blue"
-                  >
-                    Edit
-                  </Link>
-                  <button
-                    type="button"
-                    title={'Delete cameraTrap ' + cameraTrap.id}
-                    className="rw-button rw-button-small rw-button-red"
-                    onClick={() => onDeleteClick(cameraTrap.id)}
-                  >
-                    Delete
-                  </button>
-                </nav>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div>
+      <Flex
+        direction="row"
+        marginTop="size-500"
+        alignContent="stretch"
+        height="size-600"
+      >
+        <View alignSelf="center" width="size-2000" maxWidth="20vw">
+          <Breadcrumbs alignSelf="center">
+            <Item key="cameraTraps">Camera Traps</Item>
+          </Breadcrumbs>
+        </View>
+
+        <View alignSelf="center">
+          <ActionButton onPress={onAddNewClick}>
+            <Add />
+            <Text> Add New Camera Trap</Text>
+          </ActionButton>
+        </View>
+      </Flex>
+      <Grid
+        marginTop="size-500"
+        justifyContent="center"
+        columnGap="size-500"
+        columns={repeat('auto-fit', 'size-4600')}
+        autoRows="auto-fit"
+      >
+        {cameraTraps.map((cameraTrap) => (
+          <View
+            backgroundColor="static-white"
+            borderRadius="medium"
+            borderColor="light"
+            borderWidth="thick"
+            key={cameraTrap.id}
+            padding="size-200"
+            width="size-4600"
+            maxWidth="100%"
+            marginBottom="size-500"
+          >
+            <Heading level={2}>
+              <Link to={routes.cameraTrap({ id: cameraTrap.id })}>
+                <Text>{cameraTrap.deviceId}</Text>
+              </Link>
+            </Heading>
+            <Well>
+              This camera has captured{' '}
+              <strong>{cameraTrap.photos.length}</strong>&nbsp;photos across{' '}
+              <strong>{cameraTrap.batches.length}</strong>&nbsp;batches
+            </Well>
+            <p>
+              {/* <StatusLight variant="positive">ACTIVE</StatusLight> */}
+              <StatusLight variant="neutral">RESTING</StatusLight>
+              {/* <StatusLight variant="negative">NOT WORKING</StatusLight> */}
+            </p>
+            <ActionGroup onAction={onActionPress}>
+              <Item key={`view-${cameraTrap.id}`}>
+                <Article /> <Text>View Details</Text>
+              </Item>
+              <Item key={`viewBatches-${cameraTrap.id}`}>
+                <ImageCheck /> <Text>View Batches</Text>
+              </Item>
+              {/* <Item>
+                <Delete />
+              </Item> */}
+            </ActionGroup>
+          </View>
+        ))}
+      </Grid>
     </div>
   );
 };

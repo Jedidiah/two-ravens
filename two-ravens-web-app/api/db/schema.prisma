@@ -45,6 +45,8 @@ model User {
 model CameraTrap {
   id       String            @id @default(cuid())
   deviceId String            @unique
+  manufacturer String        @default("gardepro")
+  project String?
   batches  CameraTrapBatch[]
   events   CameraTrapEvent[]
   photos   Photo[]
@@ -55,52 +57,28 @@ model CameraTrap {
 }
 
 model CameraTrapEvent {
-  id   String   @id @default(cuid())
-  date DateTime
-
-  cameraTrap   CameraTrap @relation(fields: [cameraTrapId], references: [id])
-  cameraTrapId String
-
-  projectName String? @default("-")
-  staffName   String? @default("-")
-
-  datetime_updated DateTime
-  cameraLocation   String
-  cameraProcedure  String
-  //    battery_memory_replacement
-  //    camera_moved
-  //    camera_removed
-  //    camera_stolen
-  // 	  camera_other_update
-
-  cameraAttachmentPosition String?
-  //    tree
-  // 	  post
-  // 	  other_position
-
-  cameraHeight Decimal?
   areaDeployed String?
+  cameraAttachmentPosition String?
+  cameraHeight Decimal?
+  cameraLocation   String
   cameraMake   String?
-  // 	  ·   Browning browning
-  // 	  ·   Bushnell bushnell
-  // 	  ·   Cuddeback cuddeback
-  // 	  ·   Moultrie moultrie
-  // 	  ·   Reconyx reconyx
-  // 	  ·   Spypoint spypoint
-  // 	  ·   Other camera_make_other String
-
-  cameraTarget String?
-  // 	  ·   Wildlife trail Wildlife trail
-  // 	  ·   Wildlife feeding area Wildlife feeding area
-  // 	  ·   Rubbing posts Rubbing posts
-  // 	  ·   Water hole Water hole
-  // 	  ·   Human trail Human trail
-  // 	  ·   Road _Road
-  // 	  ·   Other other_feature String
-
+  cameraProcedure  String
   cameraSitePhoto String?
+  cameraTarget String?
+  cameraTrap   CameraTrap? @relation(fields: [cameraTrapId], references: [id])
+  cameraTrapId String?
   cameraWorking   Boolean
   comments        String?
+  date DateTime
+  datetimeUpdated DateTime
+  deviceId String
+  gisLink String?
+  id   String   @id @default(cuid())
+  projectName String? @default("-")
+  staffName   String? @default("-")
+  userEmail String?
+  userFullname String?
+  userUsername String?
 }
 
 model CameraTrapBatch {

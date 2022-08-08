@@ -31,20 +31,20 @@ describe('cameraTraps', () => {
 
   scenario('creates a cameraTrap', async () => {
     const result = await createCameraTrap({
-      input: { deviceId: 'String3936107' },
+      input: { deviceId: 'String5391768' },
     });
 
-    expect(result.deviceId).toEqual('String3936107');
+    expect(result.deviceId).toEqual('String5391768');
   });
 
   scenario('updates a cameraTrap', async (scenario: StandardScenario) => {
     const original = await cameraTrap({ id: scenario.cameraTrap.one.id });
     const result = await updateCameraTrap({
       id: original.id,
-      input: { deviceId: 'String24484372' },
+      input: { deviceId: 'String78605332' },
     });
 
-    expect(result.deviceId).toEqual('String24484372');
+    expect(result.deviceId).toEqual('String78605332');
   });
 
   scenario('deletes a cameraTrap', async (scenario: StandardScenario) => {
