@@ -12,7 +12,10 @@ export const schema = gql`
   }
 
   type Query {
-    cameraTrapBatches: [CameraTrapBatch!]! @requireAuth
+    cameraTrapBatches(
+      status: String
+      cameraTrapId: String
+    ): [CameraTrapBatch!]! @requireAuth
     cameraTrapBatch(id: String!): CameraTrapBatch @requireAuth
   }
 

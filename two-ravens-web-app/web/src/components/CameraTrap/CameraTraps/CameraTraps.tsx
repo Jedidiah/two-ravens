@@ -27,6 +27,7 @@ import { QUERY } from 'src/components/CameraTrap/CameraTrapsCell';
 import Delete from '@spectrum-icons/workflow/Delete';
 import ImageCheck from '@spectrum-icons/workflow/ImageCheck';
 import Article from '@spectrum-icons/workflow/Article';
+import CameraTrapStatus from 'src/components/CameraTrapStatus/CameraTrapStatus';
 
 const DELETE_CAMERA_TRAP_MUTATION = gql`
   mutation DeleteCameraTrapMutation($id: String!) {
@@ -107,7 +108,7 @@ const CameraTrapsList = ({ cameraTraps }) => {
     }
     if (key.startsWith('viewBatches-')) {
       const id = key.replace('viewBatches-', '');
-      navigate(routes.cameraTrapBatches({ cameraId: id }));
+      navigate(routes.cameraTrapBatches({ camera: id }));
     }
   }, []);
 
@@ -159,12 +160,11 @@ const CameraTrapsList = ({ cameraTraps }) => {
             <Well>
               This camera has captured{' '}
               <strong>{cameraTrap.photos.length}</strong>&nbsp;photos across{' '}
-              <strong>{cameraTrap.batches.length}</strong>&nbsp;batches
+              <strong>{cameraTrap.batches.length}</strong>&nbsp;
+              {cameraTrap.batches.length === 1 ? 'batch' : 'batches'}
             </Well>
             <p>
-              {/* <StatusLight variant="positive">ACTIVE</StatusLight> */}
-              <StatusLight variant="neutral">RESTING</StatusLight>
-              {/* <StatusLight variant="negative">NOT WORKING</StatusLight> */}
+              <CameraTrapStatus latestEvent={cameraTrap.events[0]} />
             </p>
             <ActionGroup onAction={onActionPress}>
               <Item key={`view-${cameraTrap.id}`}>

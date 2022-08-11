@@ -3,26 +3,29 @@ import { PropsWithChildren, ReactFragment, useCallback, useState } from 'react';
 import {
   ActionButton,
   Content,
-  Divider,
   Flex,
   Heading,
+  Icon,
   IllustratedMessage,
-  Provider,
   Text,
   View,
   Well,
 } from '@adobe/react-spectrum';
+import { ViewStyleProps } from '@react-types/shared';
 import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
 import ArrowDown from '@spectrum-icons/workflow/ArrowDown';
 import ArrowUp from '@spectrum-icons/workflow/ArrowUp';
+import CameraRefresh from '@spectrum-icons/workflow/CameraRefresh';
 import Clock from '@spectrum-icons/workflow/Clock';
-import MapView from '@spectrum-icons/workflow/MapView';
 import PinOn from '@spectrum-icons/workflow/PinOn';
-import RealTimeCustomerProfile from '@spectrum-icons/workflow/RealTimeCustomerProfile';
 import User from '@spectrum-icons/workflow/User';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import formatISO9075 from 'date-fns/formatISO9075';
+import omit from 'lodash/omit';
+import { GiSadCrab } from 'react-icons/gi';
 import { CameraTrapEvent } from 'types/graphql';
+
+import EventMap from '../EventMap/EventMap';
 
 function FormattedDate(props: { dateString: string }) {
   const date = new Date(props.dateString);
@@ -39,11 +42,15 @@ const eventTypeMap = {
   camera_moved: PlacementEvent,
   camera_removed: PickupEvent,
   camera_stolen: StolenEvent,
-  battery_memory_replacement: PlacementEvent,
+  battery_memory_replacement: ChangeEvent,
 };
 
 function EventTemplate(
-  props: PropsWithChildren<{ event: CameraTrapEvent; icon?: ReactFragment }>
+  props: PropsWithChildren<{
+    event: CameraTrapEvent;
+    icon?: ReactFragment;
+    blobColor?: ViewStyleProps['backgroundColor'];
+  }>
 ) {
   const { event, icon = null } = props;
   const [detailsCollapsed, setDetailsCollapsed] = useState<boolean>(true);
@@ -54,10 +61,15 @@ function EventTemplate(
   const viewOnGIS = useCallback(() => {
     window.location = event.gisLink;
   }, [detailsCollapsed, setDetailsCollapsed]);
+
+  const location = event.cameraLocation
+    ? JSON.parse(event.cameraLocation)
+    : undefined;
+
   return (
     <View marginTop="size-500">
       <View
-        backgroundColor="blue-400"
+        backgroundColor={props.blobColor ?? 'static-gray-500'}
         width="size-2400"
         padding="size-10"
         borderRadius="large"
@@ -110,13 +122,27 @@ function EventTemplate(
               </a>
             )}
 
+            {!!location && (
+              <EventMap
+                zoom={14}
+                position={[Number(location.y), Number(location.x)]}
+              />
+            )}
+
             <Well marginTop="size-300">
               <table>
                 <tr>
                   <th>Key:</th>
                   <th>Value:</th>
                 </tr>
-                {Object.keys(event).map((key) => (
+                {Object.keys(
+                  omit(event, [
+                    '__typename',
+                    'cameraLocation',
+                    'gisLink',
+                    'date',
+                  ])
+                ).map((key) => (
                   <tr key={key}>
                     <th
                       style={{
@@ -151,8 +177,60 @@ function EventTemplate(
 function PlacementEvent(props: { event: CameraTrapEvent }) {
   const { event } = props;
   return (
-    <EventTemplate icon={<ArrowDown color="positive" size="L" />} event={event}>
+    <EventTemplate
+      icon={<ArrowDown color="positive" size="L" />}
+      blobColor="green-500"
+      event={event}
+    >
       Camera placed{' '}
+      <strong
+        style={{
+          background: '#eee',
+          margin: '0 4px',
+          display: 'inline-block',
+        }}
+      >
+        <Clock color="informative" size="S" />
+        &nbsp;
+        <Text>
+          <FormattedDate dateString={event.datetimeUpdated} />
+        </Text>
+      </strong>{' '}
+      in{' '}
+      <strong
+        style={{
+          background: '#eee',
+          margin: '0 4px',
+          display: 'inline-block',
+        }}
+      >
+        <PinOn color="informative" size="S" />
+        &nbsp;<Text>{event.areaDeployed}</Text>
+      </strong>{' '}
+      by{' '}
+      <strong
+        style={{
+          background: '#eee',
+          margin: '0 4px',
+          display: 'inline-block',
+        }}
+      >
+        <User color="informative" size="S" alignSelf="center" />
+        &nbsp;<Text>{event.staffName}</Text>
+      </strong>{' '}
+    </EventTemplate>
+  );
+}
+
+function ChangeEvent(props: { event: CameraTrapEvent }) {
+  const { event } = props;
+  return (
+    <EventTemplate
+      icon={<CameraRefresh size="L" />}
+      blobColor="seafoam-500"
+      event={event}
+    >
+      Memory Card Swapped{' '}
       <strong
         style={{
           background: '#eee',
@@ -197,6 +275,7 @@ function PickupEvent(props: { event: CameraTrapEvent }) {
   return (
     <EventTemplate
       icon={<ArrowUp color="informative" size="L" />}
+      blobColor="blue-400"
       event={event}
     >
       Camera was collected{' '}
@@ -242,7 +321,15 @@ function PickupEvent(props: { event: CameraTrapEvent }) {
 function StolenEvent(props: { event: CameraTrapEvent }) {
   const { event } = props;
   return (
-    <EventTemplate event={event}>
+    <EventTemplate
+      event={event}
+      blobColor="red-500"
+      icon={
+        <Icon color="negative" size="XL">
+          <GiSadCrab />
+        </Icon>
+      }
+    >
       Camera reported stolen{' '}
       <strong
         style={{

@@ -43,60 +43,59 @@ model User {
 }
 
 model CameraTrap {
-  id       String            @id @default(cuid())
-  deviceId String            @unique
-  manufacturer String        @default("gardepro")
-  project String?
-  batches  CameraTrapBatch[]
-  events   CameraTrapEvent[]
-  photos   Photo[]
+  id           String            @id @default(cuid())
+  deviceId     String            @unique
+  manufacturer String            @default("gardepro")
+  project      String?
+  batches      CameraTrapBatch[]
+  events       CameraTrapEvent[]
+  photos       Photo[]
 
   // mediavaletCategory          MediavaletCategory? @relation(fields: [mediavaletCategoryId], references: [id])
-  mediavaletCategoryId        String?             @unique
-  mediavaletDownloadsFolderId String?             @unique
+  mediavaletCategoryId        String? @unique
+  mediavaletDownloadsFolderId String? @unique
+  mediavaletProcessedFolderId String? @unique
 }
 
 model CameraTrapEvent {
-  areaDeployed String?
+  areaDeployed             String?
   cameraAttachmentPosition String?
-  cameraHeight Decimal?
-  cameraLocation   String
-  cameraMake   String?
-  cameraProcedure  String
-  cameraSitePhoto String?
-  cameraTarget String?
-  cameraTrap   CameraTrap? @relation(fields: [cameraTrapId], references: [id])
-  cameraTrapId String?
-  cameraWorking   Boolean
-  comments        String?
-  date DateTime
-  datetimeUpdated DateTime
-  deviceId String
-  gisLink String?
-  id   String   @id @default(cuid())
-  projectName String? @default("-")
-  staffName   String? @default("-")
-  userEmail String?
-  userFullname String?
-  userUsername String?
+  cameraHeight             Decimal?
+  cameraLocation           String
+  cameraLocationX          Decimal?
+  cameraLocationY          Decimal?
+  cameraMake               String?
+  cameraProcedure          String
+  cameraSitePhoto          String?
+  cameraTarget             String?
+  cameraTrap               CameraTrap? @relation(fields: [cameraTrapId], references: [id])
+  cameraTrapId             String?
+  cameraWorking            Boolean
+  comments                 String?
+  date                     DateTime
+  datetimeUpdated          DateTime
+  deviceId                 String
+  gisLink                  String?
+  id                       String      @id @default(cuid())
+  projectName              String?     @default("-")
+  staffName                String?     @default("-")
+  userEmail                String?
+  userFullname             String?
+  userUsername             String?
 }
 
 model CameraTrapBatch {
   id        String   @id @default(cuid())
   dateStart DateTime
   dateEnd   DateTime
-
   cameraTrap   CameraTrap @relation(fields: [cameraTrapId], references: [id])
   cameraTrapId String
-
-  // mediavaletCategory   MediavaletCategory? @relation(fields: [mediavaletCategoryId], references: [id])
-  mediavaletCategoryId String?             @unique
-
   photos Photo[]
-
   location                 String
   cameraTrapBatchApprovals CameraTrapBatchApproval[]
   status                   String                    @default("approval")
+  eventStartId             String? @unique @map("")
+  eventEndId               String? @unique
 }
 
 model CameraTrapBatchApproval {
@@ -117,31 +116,15 @@ model Photo {
   cameraTrapId String
 
   cameraTrapBatch   CameraTrapBatch? @relation(fields: [cameraTrapBatchId], references: [id])
-  cameraTrapBatchId String
+  cameraTrapBatchId String?
 
-  assetId String?          @unique
-  // asset   MediavaletAsset? @relation(fields: [assetId], references: [id])
+  assetId     String? @unique
+  title       String  @default("")
+  description String? @default("")
+  altText     String? @default("")
+  thumb       String
+  small       String
+  medium      String
+  large       String
+  original    String
 }
-
-// model MediavaletAsset {
-//   id           String  @id
-//   title        String  @default("")
-//   thumb        String
-//   small        String
-//   medium       String
-//   large        String
-//   original     String
-//   categories   String? @default("")
-//   description  String? @default("")
-//   altText      String? @default("")
-//   dateCaptured String?
-//   photo        Photo?
-// }
-
-// model MediavaletCategory {
-//   id         String           @id
-//   name       String
-//   parentId   String
-//   batch      CameraTrapBatch?
-//   cameraTrap CameraTrap?
-// }

@@ -1,3 +1,6 @@
+import { Buffer } from 'buffer';
+import Process from 'process';
+
 import { defaultTheme, Provider } from '@adobe/react-spectrum';
 
 import { AuthProvider } from '@redwoodjs/auth';
@@ -9,6 +12,9 @@ import Routes from 'src/Routes';
 
 import './scaffold.css';
 import './index.css';
+
+window.Buffer = Buffer;
+window.process = Process;
 
 const App = () => (
   <Provider theme={defaultTheme}>

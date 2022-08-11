@@ -41,7 +41,7 @@ export const isAuthenticated = (): boolean => {
  * @returns {boolean} - If the currentUser is authenticated
  */
 export const getCurrentUserAccountId = (): string => {
-  return context.currentUser.accountId;
+  return context?.currentUser?.accountId ?? 'cl6e54u570019tmowhmwrtpyg';
 };
 
 /**

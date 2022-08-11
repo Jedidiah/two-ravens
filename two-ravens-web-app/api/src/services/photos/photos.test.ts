@@ -23,29 +23,33 @@ describe('photos', () => {
   scenario('creates a photo', async (scenario: StandardScenario) => {
     const result = await createPhoto({
       input: {
-        date: '2022-08-03T22:13:04Z',
+        date: '2022-08-08T22:05:26Z',
         cameraTrapId: scenario.photo.two.cameraTrapId,
-        cameraTrapBatchId: scenario.photo.two.cameraTrapBatchId,
-        url: 'String',
+        thumb: 'String',
+        small: 'String',
+        medium: 'String',
+        large: 'String',
+        original: 'String',
       },
     });
 
-    expect(result.date).toEqual('2022-08-03T22:13:04Z');
+    expect(result.date).toEqual('2022-08-08T22:05:26Z');
     expect(result.cameraTrapId).toEqual(scenario.photo.two.cameraTrapId);
-    expect(result.cameraTrapBatchId).toEqual(
-      scenario.photo.two.cameraTrapBatchId
-    );
-    expect(result.url).toEqual('String');
+    expect(result.thumb).toEqual('String');
+    expect(result.small).toEqual('String');
+    expect(result.medium).toEqual('String');
+    expect(result.large).toEqual('String');
+    expect(result.original).toEqual('String');
   });
 
   scenario('updates a photo', async (scenario: StandardScenario) => {
     const original = await photo({ id: scenario.photo.one.id });
     const result = await updatePhoto({
       id: original.id,
-      input: { date: '2022-08-04T22:13:04Z' },
+      input: { date: '2022-08-09T22:05:26Z' },
     });
 
-    expect(result.date).toEqual('2022-08-04T22:13:04Z');
+    expect(result.date).toEqual('2022-08-09T22:05:26Z');
   });
 
   scenario('deletes a photo', async (scenario: StandardScenario) => {

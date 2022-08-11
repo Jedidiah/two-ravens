@@ -9,6 +9,7 @@ export const schema = gql`
     photos: [Photo]!
     mediavaletCategoryId: String
     mediavaletDownloadsFolderId: String
+    mediavaletProcessedFolderId: String
   }
 
   type Query {
@@ -23,6 +24,7 @@ export const schema = gql`
     project: String
     mediavaletCategoryId: String
     mediavaletDownloadsFolderId: String
+    mediavaletProcessedFolderId: String
   }
 
   input UpdateCameraTrapInput {
@@ -31,6 +33,7 @@ export const schema = gql`
     project: String
     mediavaletCategoryId: String
     mediavaletDownloadsFolderId: String
+    mediavaletProcessedFolderId: String
   }
 
   type Mutation {

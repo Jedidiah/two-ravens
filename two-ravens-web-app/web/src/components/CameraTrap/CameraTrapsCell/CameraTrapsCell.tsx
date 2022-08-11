@@ -17,6 +17,7 @@ export const QUERY = gql`
       }
       events {
         id
+        cameraProcedure
       }
       photos {
         id

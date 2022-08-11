@@ -14,7 +14,7 @@ export const schema = gql`
 
   type Query {
     mediavaletAsset(id: String): MediavaletAsset! @requireAuth
-    mediavaletAssets: [MediavaletAsset!]! @requireAuth
+    mediavaletAssets(categoryId: String): [MediavaletAsset!]! @requireAuth
   }
 
   input UpdateMediavaletAssetInput {

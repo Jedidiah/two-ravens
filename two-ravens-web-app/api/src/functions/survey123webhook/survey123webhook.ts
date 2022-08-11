@@ -1,6 +1,9 @@
 import type { APIGatewayEvent, Context } from 'aws-lambda';
+import { db } from 'src/lib/db';
 import { logger } from 'src/lib/logger';
+import { createCameraTrapBatch } from 'src/services/cameraTrapBatches/cameraTrapBatches';
 import {
+  cameraTrapEvents,
   createCameraTrapEvent,
   updateCameraTrapEvent,
 } from 'src/services/cameraTrapEvents/cameraTrapEvents';
@@ -40,6 +43,58 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
       const cameraTrap = await cameraTrapFromDeviceId({ deviceId });
 
       const input = processEvent(unformattedEvent, cameraTrap.id);
+      logger.info(input.cameraProcedure);
+
+      if (
+        ['camera_removed', 'battery_memory_replacement'].includes(
+          input.cameraProcedure
+        )
+      ) {
+        logger.info('Creating Batch');
+        // Create Batch
+        const previousEvents = await db.cameraTrapEvent.findMany({
+          where: {
+            AND: [{ cameraTrapId: cameraTrap.id }],
+            OR: [
+              {
+                cameraProcedure: {
+                  equals: 'camera_moved',
+                },
+              },
+              {
+                cameraProcedure: {
+                  equals: 'battery_memory_replacement',
+                },
+              },
+            ],
+
+            datetimeUpdated: {
+              lt: input.datetimeUpdated,
+            },
+          },
+          select: {
+            id: true,
+            datetimeUpdated: true,
+          },
+          orderBy: {
+            datetimeUpdated: 'desc',
+          },
+          take: 1,
+        });
+        logger.info(`Found ${previousEvents.length} matching events`);
+
+        if (previousEvents.length > 0) {
+          await createCameraTrapBatch({
+            input: {
+              cameraTrapId: cameraTrap.id,
+              dateStart: previousEvents[0].datetimeUpdated.toISOString(),
+              dateEnd: input.datetimeUpdated,
+              status: 'approval',
+              location: input.cameraLocation,
+            },
+          });
+        }
+      }
 
       if (Object.keys(unformattedEvent).includes['applyEdits']) {
         await updateCameraTrapEvent({ id: input.id, input });
@@ -78,15 +133,17 @@ export const handler = async (event: APIGatewayEvent, _context: Context) => {
 
 function processEvent(event: typeof exampleBody, cameraTrapId: string) {
   const { feature, userInfo, surveyInfo } = event;
-  const { attributes, geometry } = feature;
+  const { attributes, geometry, result } = feature;
   return {
-    id: attributes.globalid,
+    id: attributes.globalid.replace('{', '').replace('}', ''),
     deviceId: attributes.camera_id,
     staffName: attributes.staff_name,
     projectName: attributes.project_name,
     datetimeUpdated: new Date(attributes.datetime_updated).toISOString(),
     date: new Date(Date.now()).toISOString(),
     cameraLocation: JSON.stringify(geometry),
+    cameraLocationX: Number(geometry.x),
+    cameraLocationY: Number(geometry.y),
     cameraProcedure:
       attributes.camera_procedure === 'other'
         ? attributes.camera_other_update
@@ -112,7 +169,8 @@ function processEvent(event: typeof exampleBody, cameraTrapId: string) {
     userEmail: userInfo.email,
     userFullname: userInfo.fullName,
     cameraTrapId,
-    gisLink: `https://survey123.arcgis.com/surveys/${surveyInfo.formItemId}/data?objectIds=${attributes.objectid}`,
+    // objectid: attributes.objectid,
+    gisLink: `https://survey123.arcgis.com/surveys/${surveyInfo.formItemId}/data?objectIds=${result.objectId}`,
   };
 }
 

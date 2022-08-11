@@ -60,7 +60,7 @@ const AuthenticatedMainMenu = (props: { user: CurrentUser }) => {
           activeClassName="main-menu__link--active"
           to={routes.home()}
         >
-          LOGO
+          <img src="/two-ravens.svg" alt="TWO RAVENS" />
         </NavLink>
       </View>
       <View></View>
@@ -70,7 +70,7 @@ const AuthenticatedMainMenu = (props: { user: CurrentUser }) => {
           activeClassName="main-menu__link--active"
           to={routes.home()}
         >
-          Explore Map
+          Explore Public Map
         </NavLink>
         <NavLink
           className="main-menu__link"

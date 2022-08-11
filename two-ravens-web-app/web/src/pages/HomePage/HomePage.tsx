@@ -1,13 +1,13 @@
 import { MetaTags } from '@redwoodjs/web';
 
+import PublicMap from 'src/components/PublicMap/PublicMap';
+
 const HomePage = () => {
   return (
     <>
       <MetaTags title="Two Ravens" description="Memory and Thought" />
 
-      <h1>JGI CodeForGood Hackathon</h1>
-      <h2>Two Ravens</h2>
-      <p>Soon TM</p>
+      <PublicMap />
     </>
   );
 };

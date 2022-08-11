@@ -1,12 +1,10 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import {
   Breadcrumbs,
-  Content,
   Divider,
   Flex,
   Heading,
-  IllustratedMessage,
   Item,
   TabList,
   TabPanels,
@@ -16,22 +14,27 @@ import {
   Well,
   StatusLight,
   ActionGroup,
+  SpectrumStatusLightProps,
 } from '@adobe/react-spectrum';
 import { Icon } from '@react-spectrum/icon';
-import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
+import Image from '@spectrum-icons/workflow/Image';
+import ImageAdd from '@spectrum-icons/workflow/ImageAdd';
+import ImageCheck from '@spectrum-icons/workflow/ImageCheck';
+import Info from '@spectrum-icons/workflow/Info';
+import LocationBasedEvent from '@spectrum-icons/workflow/LocationBasedEvent';
 import MapView from '@spectrum-icons/workflow/MapView';
 import humanize from 'humanize-string';
 import { HiOutlineQrcode } from 'react-icons/hi';
 
-import { Link, routes, navigate } from '@redwoodjs/router';
+import { routes, navigate } from '@redwoodjs/router';
 import { useMutation } from '@redwoodjs/web';
 import { toast } from '@redwoodjs/web/toast';
-import LocationBasedEvent from '@spectrum-icons/workflow/LocationBasedEvent';
-import DocumentFragment from '@spectrum-icons/workflow/DocumentFragment';
-import Info from '@spectrum-icons/workflow/Info';
-import ImageCheck from '@spectrum-icons/workflow/ImageCheck';
-import ImageAdd from '@spectrum-icons/workflow/ImageAdd';
+
 import EventList from 'src/components/EventList/EventList';
+import MediavaletAssetsCell from 'src/components/MediavaletAssetsCell';
+import CameraTrapQrCode from 'src/components/CameraTrapQRCode/CameraTrapQRCode';
+import CameraTrapStatus from 'src/components/CameraTrapStatus/CameraTrapStatus';
+import EventLocationsMap from 'src/components/EventLocationsMap/EventLocationsMap';
 
 const DELETE_CAMERA_TRAP_MUTATION = gql`
   mutation DeleteCameraTrapMutation($id: String!) {
@@ -106,7 +109,7 @@ const CameraTrap = ({ cameraTrap }) => {
     }
     if (key.startsWith('viewBatches-')) {
       const id = key.replace('viewBatches-', '');
-      navigate(routes.cameraTrapBatches({ cameraId: id }));
+      navigate(routes.cameraTrapBatches({ camera: id }));
     }
   }, []);
 
@@ -148,6 +151,9 @@ const CameraTrap = ({ cameraTrap }) => {
               <Item key="locations">
                 <MapView /> <Text marginEnd="size-200">Locations</Text>
               </Item>
+              <Item key="photos">
+                <Image /> <Text marginEnd="size-200">Photos</Text>
+              </Item>
             </TabList>
           </View>
         </Flex>
@@ -171,9 +177,7 @@ const CameraTrap = ({ cameraTrap }) => {
                   {cameraTrap.deviceId} Overview
                 </Heading>
                 <View alignSelf="center">
-                  {/* <StatusLight variant="positive">ACTIVE</StatusLight> */}
-                  <StatusLight variant="neutral">RESTING</StatusLight>
-                  {/* <StatusLight variant="negative">NOT WORKING</StatusLight> */}
+                  <CameraTrapStatus latestEvent={cameraTrap.events[0]} />
                 </View>
               </Flex>
               <Divider />
@@ -202,6 +206,12 @@ const CameraTrap = ({ cameraTrap }) => {
                       Device Name
                     </th>
                     <td>{cameraTrap.deviceId}</td>
+                  </tr>
+                  <tr>
+                    <th style={{ textAlign: 'left', paddingRight: '2rem' }}>
+                      Device Make
+                    </th>
+                    <td>{cameraTrap.manufacturer}</td>
                   </tr>
                   <tr>
                     <th style={{ textAlign: 'left', paddingRight: '2rem' }}>
@@ -256,6 +266,11 @@ const CameraTrap = ({ cameraTrap }) => {
             >
               <Heading level={1}>QR Code</Heading>
               <Divider />
+              <CameraTrapQrCode
+                deviceId={cameraTrap.deviceId}
+                project={cameraTrap.project}
+                manufacturer={cameraTrap.manufacturer}
+              />
             </View>
           </Item>
           <Item key="locations">
@@ -275,7 +290,19 @@ const CameraTrap = ({ cameraTrap }) => {
               <Heading level={1}>Locations</Heading>
               <Divider />
               <p>Here are all the places this camera has been.</p>
+              <EventLocationsMap events={[]} />
             </View>
+          </Item>
+          <Item key="photos">
+            <MediavaletAssetsCell
+              cameraTrapId={cameraTrap.id}
+              categoryId={cameraTrap.mediavaletDownloadsFolderId}
+            />
+
+            {/* <MediavaletAssetsCell
+              cameraTrapId={cameraTrap.id}
+              categoryId={cameraTrap.mediavaletProcessedFolderId}
+            /> */}
           </Item>
         </TabPanels>
       </Tabs>

@@ -29,12 +29,14 @@ type ACTION_TYPES =
   | 'SET_MANUFACTURER_OTHER'
   | 'SET_FOLDER_ID'
   | 'SET_DOWNLOAD_FOLDER_ID'
+  | 'SET_PROCESSED_FOLDER_ID'
   | 'SET_PROJECT';
 
 type TCreationState =
   | 'idle'
   | 'creatingCameraFolder'
   | 'creatingDownloadsFolder'
+  | 'creatingProcessedFolder'
   | 'submitting'
   | 'complete'
   | 'error';
@@ -47,6 +49,7 @@ interface REDUCER_STATE {
   project: string;
   mediavaletCategoryId: string;
   mediavaletDownloadsFolderId: string;
+  mediavaletProcessedFolderId: string;
 }
 
 export default function useCreateCameraTrap() {
@@ -58,6 +61,7 @@ export default function useCreateCameraTrap() {
     project: '',
     mediavaletCategoryId: '',
     mediavaletDownloadsFolderId: '',
+    mediavaletProcessedFolderId: '',
   };
   function reducer(
     state: REDUCER_STATE,
@@ -86,6 +90,10 @@ export default function useCreateCameraTrap() {
       }
       case 'SET_DOWNLOAD_FOLDER_ID': {
         return { ...state, mediavaletDownloadsFolderId: action.payload };
+      }
+
+      case 'SET_PROCESSED_FOLDER_ID': {
+        return { ...state, mediavaletProcessedFolderId: action.payload };
       }
 
       default:
@@ -128,6 +136,31 @@ export default function useCreateCameraTrap() {
         toast.success('CameraTrap Downloads Folder created');
         dispatch({
           type: 'SET_DOWNLOAD_FOLDER_ID',
+          payload: createMediavaletCategory.id,
+        });
+        dispatch({
+          type: 'SET_CREATION_STATE',
+          payload: 'creatingProcessedFolder',
+        });
+      },
+      onError: (error) => {
+        toast.error(error.message);
+        dispatch({
+          type: 'SET_CREATION_STATE',
+          payload: 'error',
+        });
+      },
+    }
+  );
+
+  const [createCameraTrapProcessedFolder] = useMutation(
+    CREATE_CAMERA_TRAP_FOLDER_MUTATION,
+    {
+      onCompleted: ({ createMediavaletCategory }) => {
+        console.log(createMediavaletCategory);
+        toast.success('CameraTrap Processed Images Folder created');
+        dispatch({
+          type: 'SET_PROCESSED_FOLDER_ID',
           payload: createMediavaletCategory.id,
         });
         dispatch({
@@ -215,6 +248,28 @@ export default function useCreateCameraTrap() {
     form.mediavaletCategoryId,
     creationState,
     createCameraTrapDownloadsFolder,
+  ]);
+
+  useEffect(() => {
+    console.log('processedFolder', form.mediavaletCategoryId, creationState);
+
+    if (
+      creationState === 'creatingProcessedFolder' &&
+      form.mediavaletCategoryId !== ''
+    ) {
+      createCameraTrapProcessedFolder({
+        variables: {
+          input: {
+            parentId: form.mediavaletCategoryId,
+            name: 'processed-images',
+          },
+        },
+      });
+    }
+  }, [
+    form.mediavaletCategoryId,
+    creationState,
+    createCameraTrapProcessedFolder,
   ]);
 
   useEffect(() => {

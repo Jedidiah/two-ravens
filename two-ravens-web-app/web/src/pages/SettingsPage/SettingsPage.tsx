@@ -1,9 +1,7 @@
-import { Button } from '@adobe/react-spectrum';
 import { useAuth } from '@redwoodjs/auth';
-import { Link, routes } from '@redwoodjs/router';
 import { MetaTags } from '@redwoodjs/web';
-import { useCallback, useEffect } from 'react';
-import MediavaletCategoryCell from 'src/components/MediavaletCategoryCell';
+import { useCallback } from 'react';
+import CameraTrapBatchCell from 'src/components/CameraTrapBatch/CameraTrapBatchCell';
 
 const SettingsPage = () => {
   const { getToken } = useAuth();
@@ -25,19 +23,17 @@ const SettingsPage = () => {
   return (
     <>
       <MetaTags title="Settings" description="Settings page" />
-
-      <h1>SettingsPage</h1>
-      <p>
-        Find me in <code>./web/src/pages/SettingsPage/SettingsPage.tsx</code>
-      </p>
-      <p>
-        My default route is named <code>settings</code>, link to me with `
-        <Link to={routes.settings()}>Settings</Link>`
-      </p>
-      <Button variant="cta" onPress={a}>
-        Function
-      </Button>
-      <MediavaletCategoryCell id="614d9567-e602-40cf-9c46-36c8c125a124" />
+      {/* <PDFViewer
+        style={{
+          width: '100vw',
+          maxWidth: '100%',
+          height: '90vh',
+          border: 'none',
+        }}
+      >
+        <TestPdf /> */}
+      {/* </PDFViewer> */}
+      <CameraTrapBatchCell id="cl6l5okaj0257z8owiaaqtb7f" />
     </>
   );
 };
