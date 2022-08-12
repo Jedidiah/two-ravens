@@ -47,7 +47,7 @@ export const createCameraTrapBatch: MutationResolvers['createCameraTrapBatch'] =
     });
 
     return db.cameraTrapBatch.create({
-      data: { ...input, mediavaletCategoryId: id },
+      data: input,
     });
   };
 

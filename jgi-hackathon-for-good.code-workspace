@@ -7,6 +7,9 @@
     {
       "name": "WEBAPP",
       "path": "./two-ravens-web-app"
+    },
+    {
+      "path": "scripts"
     }
   ],
   "settings": {

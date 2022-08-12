@@ -31,10 +31,10 @@ const Routes = () => {
           <Route path="/integrations" page={IntegrationsPage} name="integrations" />
           <Set wrap={CameraTrapsLayout}>
             {/* <Set wrap={CameraTrapEventsLayout}> */}
-            <Route path="/camera-trap-events/new" page={CameraTrapEventNewCameraTrapEventPage} name="newCameraTrapEvent" />
+            {/* <Route path="/camera-trap-events/new" page={CameraTrapEventNewCameraTrapEventPage} name="newCameraTrapEvent" />
             <Route path="/camera-trap-events/{id}/edit" page={CameraTrapEventEditCameraTrapEventPage} name="editCameraTrapEvent" />
             <Route path="/camera-trap-events/{id}" page={CameraTrapEventCameraTrapEventPage} name="cameraTrapEvent" />
-            <Route path="/camera-trap-events" page={CameraTrapEventCameraTrapEventsPage} name="cameraTrapEvents" />
+            <Route path="/camera-trap-events" page={CameraTrapEventCameraTrapEventsPage} name="cameraTrapEvents" /> */}
             {/* </Set> */}
 
             {/* <Set wrap={CameraTrapBatchApprovalsLayout}> */}
@@ -45,13 +45,15 @@ const Routes = () => {
             {/* </Set> */}
 
             {/* <Set wrap={CameraTrapBatchesLayout}> */}
-            <Route path="/camera-trap-batches/new" page={CameraTrapBatchNewCameraTrapBatchPage} name="newCameraTrapBatch" />
-            <Route path="/camera-trap-batches/{id}/edit" page={CameraTrapBatchEditCameraTrapBatchPage} name="editCameraTrapBatch" />
-            <Route path="/camera-trap-batches/{id}" page={CameraTrapBatchCameraTrapBatchPage} name="cameraTrapBatch" />
-            <Route path="/camera-trap-batches" page={CameraTrapBatchCameraTrapBatchesPage} name="cameraTrapBatches" />
+            {/* <Route path="/camera-trap-batches/new" page={CameraTrapBatchNewCameraTrapBatchPage} name="newCameraTrapBatch" /> */}
+            <Route path="/batch/{id}/approve" page={BatchApprovalPage} name="approveCameraTrapBatch" />
+            <Route path="/batch/{id}/edit" page={CameraTrapBatchEditCameraTrapBatchPage} name="editCameraTrapBatch" />
+            <Route path="/batch/{id}" page={CameraTrapBatchCameraTrapBatchPage} name="cameraTrapBatch" />
+            {/* <Route path="/camera-trap-batches" page={CameraTrapBatchCameraTrapBatchesPage} name="cameraTrapBatches" /> */}
             {/* </Set> */}
 
             <Route path="/camera-traps/new" page={CameraTrapNewCameraTrapPage} name="newCameraTrap" />
+            <Route path="/camera-traps/{id}/{tab}" page={CameraTrapCameraTrapPage} name="cameraTrapTab" />
             <Route path="/camera-traps/{id}/edit" page={CameraTrapEditCameraTrapPage} name="editCameraTrap" />
             <Route path="/camera-traps/{id}" page={CameraTrapCameraTrapPage} name="cameraTrap" />
             <Route path="/camera-traps" page={CameraTrapCameraTrapsPage} name="cameraTraps" />

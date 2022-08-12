@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { Key, useCallback, useState } from 'react';
 
 import {
   Breadcrumbs,
@@ -12,95 +12,50 @@ import {
   View,
   Text,
   Well,
-  StatusLight,
-  ActionGroup,
-  SpectrumStatusLightProps,
+  MenuTrigger,
+  ActionButton,
+  Menu,
+  Provider,
 } from '@adobe/react-spectrum';
 import { Icon } from '@react-spectrum/icon';
-import Image from '@spectrum-icons/workflow/Image';
-import ImageAdd from '@spectrum-icons/workflow/ImageAdd';
-import ImageCheck from '@spectrum-icons/workflow/ImageCheck';
+import Camera from '@spectrum-icons/workflow/Camera';
 import Info from '@spectrum-icons/workflow/Info';
 import LocationBasedEvent from '@spectrum-icons/workflow/LocationBasedEvent';
 import MapView from '@spectrum-icons/workflow/MapView';
-import humanize from 'humanize-string';
+import { FaRegImages } from 'react-icons/fa';
 import { HiOutlineQrcode } from 'react-icons/hi';
+import { IoMdArrowDropdown } from 'react-icons/io';
 
 import { routes, navigate } from '@redwoodjs/router';
-import { useMutation } from '@redwoodjs/web';
-import { toast } from '@redwoodjs/web/toast';
 
-import EventList from 'src/components/EventList/EventList';
-import MediavaletAssetsCell from 'src/components/MediavaletAssetsCell';
+import CameraTrapBatchesCell from 'src/components/CameraTrapBatch/CameraTrapBatchesCell';
 import CameraTrapQrCode from 'src/components/CameraTrapQRCode/CameraTrapQRCode';
 import CameraTrapStatus from 'src/components/CameraTrapStatus/CameraTrapStatus';
+import EventList from 'src/components/EventList/EventList';
 import EventLocationsMap from 'src/components/EventLocationsMap/EventLocationsMap';
+import MediavaletAssetsCell from 'src/components/MediavaletAssetsCell';
 
-const DELETE_CAMERA_TRAP_MUTATION = gql`
-  mutation DeleteCameraTrapMutation($id: String!) {
-    deleteCameraTrap(id: $id) {
-      id
-    }
-  }
-`;
-
-const formatEnum = (values: string | string[] | null | undefined) => {
-  if (values) {
-    if (Array.isArray(values)) {
-      const humanizedValues = values.map((value) => humanize(value));
-      return humanizedValues.join(', ');
-    } else {
-      return humanize(values as string);
-    }
-  }
-};
-
-const jsonDisplay = (obj) => {
-  return (
-    <pre>
-      <code>{JSON.stringify(obj, null, 2)}</code>
-    </pre>
-  );
-};
-
-const timeTag = (datetime) => {
-  return (
-    datetime && (
-      <time dateTime={datetime} title={datetime}>
-        {new Date(datetime).toUTCString()}
-      </time>
-    )
-  );
-};
-
-const checkboxInputTag = (checked) => {
-  return <input type="checkbox" checked={checked} disabled />;
-};
-
-const CameraTrap = ({ cameraTrap }) => {
-  const [deleteCameraTrap] = useMutation(DELETE_CAMERA_TRAP_MUTATION, {
-    onCompleted: () => {
-      toast.success('CameraTrap deleted');
-      navigate(routes.cameraTraps());
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-
-  const onDeleteClick = (id) => {
-    if (confirm('Are you sure you want to delete cameraTrap ' + id + '?')) {
-      deleteCameraTrap({ variables: { id } });
-    }
-  };
-
+const CameraTrap = ({ cameraTrap, cameraTraps = [], tab }) => {
+  const [currentTab, setCurrentTab] = useState(tab);
   const handleBreadcrumbs = useCallback(() => {
     navigate(routes.cameraTraps());
   }, []);
 
-  const switchTab = useCallback((_newStatus: string) => {
-    // updateQuery({ status: newStatus });
-  }, []);
+  const switchTab = useCallback(
+    (newTab: string) => {
+      // Using navigate like the below causes the tabs to lose keyboard focus
+      // navigate(routes.cameraTrapTab({ id: cameraTrap.id, tab: newTab }));
+
+      // Using window history preserves keyboard navigation but also does not break reloading the page
+      window.history.pushState(
+        {},
+        '',
+        routes.cameraTrapTab({ id: cameraTrap.id, tab: newTab })
+      );
+      setCurrentTab(newTab);
+    },
+    [cameraTrap.id, setCurrentTab]
+  );
 
   const onActionPress = useCallback((key: string) => {
     if (key.startsWith('view-')) {
@@ -113,12 +68,21 @@ const CameraTrap = ({ cameraTrap }) => {
     }
   }, []);
 
+  const switchCamera = useCallback(
+    (selectionSet: Set<Key>) => {
+      console.log({ selectionSet });
+      const id = selectionSet.valueOf(0)?.currentKey;
+      navigate(routes.cameraTrapTab({ id, tab: currentTab }));
+    },
+    [currentTab]
+  );
+
   return (
     <>
       <Tabs
         aria-label="Camera Trap Batch Statuses"
         onSelectionChange={switchTab}
-        defaultSelectedKey={String(status)}
+        defaultSelectedKey={String(currentTab)}
       >
         <Flex
           direction="row"
@@ -129,7 +93,29 @@ const CameraTrap = ({ cameraTrap }) => {
           <View alignSelf="center" width="size-3400" maxWidth="20vw">
             <Breadcrumbs onAction={handleBreadcrumbs}>
               <Item key="cameraTraps">Camera Traps</Item>
-              <Item key="newCameraTrap">{cameraTrap.deviceId}</Item>
+              <Item key="newCameraTrap">
+                <MenuTrigger closeOnSelect>
+                  {/* <Text>{cameraTrap.deviceId}</Text> */}
+                  <Provider marginStart="size-200" colorScheme="dark">
+                    <ActionButton>
+                      <Icon>
+                        <IoMdArrowDropdown />
+                      </Icon>
+                      <Camera />
+                      <Text>{cameraTrap.deviceId}</Text>
+                    </ActionButton>
+                  </Provider>
+                  <Menu
+                    selectionMode="single"
+                    selectedKeys={[cameraTrap.id]}
+                    onSelectionChange={switchCamera}
+                  >
+                    {cameraTraps.map((cam) => (
+                      <Item key={cam.id}>{cam.deviceId}</Item>
+                    ))}
+                  </Menu>
+                </MenuTrigger>
+              </Item>
             </Breadcrumbs>
           </View>
           <View flexGrow={1} paddingStart="size-500">
@@ -137,6 +123,12 @@ const CameraTrap = ({ cameraTrap }) => {
               <Item key="overview">
                 <Info />
                 <Text marginEnd="size-200">Overview</Text>
+              </Item>
+              <Item key="batches">
+                <Icon>
+                  <FaRegImages />
+                </Icon>{' '}
+                <Text marginEnd="size-200">Batches</Text>
               </Item>
               <Item key="events">
                 <LocationBasedEvent />
@@ -150,9 +142,6 @@ const CameraTrap = ({ cameraTrap }) => {
               </Item>
               <Item key="locations">
                 <MapView /> <Text marginEnd="size-200">Locations</Text>
-              </Item>
-              <Item key="photos">
-                <Image /> <Text marginEnd="size-200">Photos</Text>
               </Item>
             </TabList>
           </View>
@@ -187,64 +176,70 @@ const CameraTrap = ({ cameraTrap }) => {
                 <strong>{cameraTrap.batches.length}</strong>&nbsp;batches
               </Well>
 
-              <ActionGroup onAction={onActionPress} marginTop="size-450">
+              {/* <ActionGroup onAction={onActionPress} marginTop="size-450">
                 <Item key={`viewBatches-${cameraTrap.id}`}>
                   <ImageCheck /> <Text>View Batches</Text>
                 </Item>
                 <Item key="uploadImages">
                   <ImageAdd /> <Text>Upload Images</Text>
                 </Item>
-                {/* <Item>
-                <Delete />
-              </Item> */}
-              </ActionGroup>
-
-              <View marginTop="size-450">
-                <table>
-                  <tr>
-                    <th style={{ textAlign: 'left', paddingRight: '2rem' }}>
-                      Device Name
-                    </th>
-                    <td>{cameraTrap.deviceId}</td>
-                  </tr>
-                  <tr>
-                    <th style={{ textAlign: 'left', paddingRight: '2rem' }}>
-                      Device Make
-                    </th>
-                    <td>{cameraTrap.manufacturer}</td>
-                  </tr>
-                  <tr>
-                    <th style={{ textAlign: 'left', paddingRight: '2rem' }}>
-                      Project
-                    </th>
-                    <td>{cameraTrap.project ?? '-'}</td>
-                  </tr>
-                  <tr>
-                    <th style={{ textAlign: 'left', paddingRight: '2rem' }}>
-                      Internal ID
-                    </th>
-                    <td>
-                      <code>{cameraTrap.id}</code>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th style={{ textAlign: 'left', paddingRight: '2rem' }}>
-                      MediaValet Category ID
-                    </th>
-                    <td>
-                      <code>{cameraTrap.mediavaletCategoryId}</code>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th style={{ textAlign: 'left', paddingRight: '2rem' }}>
-                      Device Serial Number
-                    </th>
-                    <td>
-                      <code>-</code>
-                    </td>
-                  </tr>
-                </table>
-              </View>
+              </ActionGroup> */}
+              <Flex direction="row" marginTop="size-450">
+                <View width="40%" marginEnd="10%">
+                  <Heading>
+                    <Info marginBottom="-0.3em" /> <Text>Key Info</Text>
+                  </Heading>
+                  <Divider height={1} marginBottom="size-400" />
+                  <table>
+                    <tr>
+                      <th style={{ textAlign: 'left', paddingRight: '2rem' }}>
+                        Device Name
+                      </th>
+                      <td>{cameraTrap.deviceId}</td>
+                    </tr>
+                    <tr>
+                      <th style={{ textAlign: 'left', paddingRight: '2rem' }}>
+                        Device Make
+                      </th>
+                      <td>{cameraTrap.manufacturer}</td>
+                    </tr>
+                    <tr>
+                      <th style={{ textAlign: 'left', paddingRight: '2rem' }}>
+                        Project
+                      </th>
+                      <td>{cameraTrap.project ?? '-'}</td>
+                    </tr>
+                    <tr>
+                      <th style={{ textAlign: 'left', paddingRight: '2rem' }}>
+                        Internal ID
+                      </th>
+                      <td>
+                        <code>{cameraTrap.id}</code>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th style={{ textAlign: 'left', paddingRight: '2rem' }}>
+                        MediaValet Category ID
+                      </th>
+                      <td>
+                        <code>{cameraTrap.mediavaletCategoryId}</code>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th style={{ textAlign: 'left', paddingRight: '2rem' }}>
+                        Device Serial Number
+                      </th>
+                      <td>
+                        <code>-</code>
+                      </td>
+                    </tr>
+                  </table>
+                </View>
+                <MediavaletAssetsCell
+                  cameraTrapId={cameraTrap.id}
+                  categoryId={cameraTrap.mediavaletDownloadsFolderId}
+                />
+              </Flex>
             </View>
           </Item>
           <Item key="events">
@@ -293,16 +288,11 @@ const CameraTrap = ({ cameraTrap }) => {
               <EventLocationsMap events={[]} />
             </View>
           </Item>
-          <Item key="photos">
-            <MediavaletAssetsCell
+          <Item key="batches">
+            <CameraTrapBatchesCell
               cameraTrapId={cameraTrap.id}
-              categoryId={cameraTrap.mediavaletDownloadsFolderId}
+              hideCameraSelector
             />
-
-            {/* <MediavaletAssetsCell
-              cameraTrapId={cameraTrap.id}
-              categoryId={cameraTrap.mediavaletProcessedFolderId}
-            /> */}
           </Item>
         </TabPanels>
       </Tabs>

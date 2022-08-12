@@ -2,11 +2,17 @@ import { PropsWithChildren, ReactFragment, useCallback, useState } from 'react';
 
 import {
   ActionButton,
+  Cell,
+  Column,
   Content,
   Flex,
   Heading,
   Icon,
   IllustratedMessage,
+  Row,
+  TableBody,
+  TableHeader,
+  TableView,
   Text,
   View,
   Well,
@@ -26,6 +32,7 @@ import { GiSadCrab } from 'react-icons/gi';
 import { CameraTrapEvent } from 'types/graphql';
 
 import EventMap from '../EventMap/EventMap';
+import { startCase } from 'lodash';
 
 function FormattedDate(props: { dateString: string }) {
   const date = new Date(props.dateString);
@@ -129,12 +136,12 @@ function EventTemplate(
               />
             )}
 
-            <Well marginTop="size-300">
-              <table>
-                <tr>
-                  <th>Key:</th>
-                  <th>Value:</th>
-                </tr>
+            <TableView marginTop="size-300">
+              <TableHeader>
+                <Column>Key:</Column>
+                <Column width="70%">Value:</Column>
+              </TableHeader>
+              <TableBody>
                 {Object.keys(
                   omit(event, [
                     '__typename',
@@ -143,30 +150,15 @@ function EventTemplate(
                     'date',
                   ])
                 ).map((key) => (
-                  <tr key={key}>
-                    <th
-                      style={{
-                        paddingRight: '2rem',
-                        paddingBottom: '1rem',
-                        paddingTop: '0.5rem',
-                        borderTop: '1px solid #ccc',
-                      }}
-                    >
-                      {key}
-                    </th>
-                    <td
-                      style={{
-                        borderTop: '1px solid #ccc',
-                        paddingBottom: '1rem',
-                        paddingTop: '0.5rem',
-                      }}
-                    >
-                      {String(event[key])}
-                    </td>
-                  </tr>
+                  <Row key={key}>
+                    <Cell>
+                      <strong>{startCase(key)}</strong>
+                    </Cell>
+                    <Cell>{String(event[key])}</Cell>
+                  </Row>
                 ))}
-              </table>
-            </Well>
+              </TableBody>
+            </TableView>
           </>
         )}
       </View>
@@ -366,6 +358,7 @@ function StolenEvent(props: { event: CameraTrapEvent }) {
         <User color="informative" size="S" alignSelf="center" />
         &nbsp;<Text>{event.staffName}</Text>
       </strong>{' '}
+      <Well marginTop="size-225">{event.comments}</Well>
     </EventTemplate>
   );
 }

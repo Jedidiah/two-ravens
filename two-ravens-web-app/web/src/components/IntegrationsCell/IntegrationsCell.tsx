@@ -111,7 +111,7 @@ function IntegrationPane({
   title,
   status,
   description,
-  onPress = () => {},
+  onPress,
 }: {
   gridArea: string;
   title: string;
@@ -141,16 +141,20 @@ function IntegrationPane({
             </View>
           </Flex>
         </View>
-        <View flexGrow={1}>
+        <View flexGrow={1} marginBottom="size-200">
           <Well>
             <Text>{description}</Text>
           </Well>
         </View>
-        <View>
-          <Button onPress={onPress} variant={statusMap[status][3]}>
-            {statusMap[status][2]}
-          </Button>
-        </View>
+        {Boolean(onPress) ? (
+          <View>
+            <Button onPress={onPress} variant={statusMap[status][3]}>
+              {statusMap[status][2]}
+            </Button>
+          </View>
+        ) : (
+          <Text>Configured in .env</Text>
+        )}
       </Flex>
     </View>
   );
@@ -162,8 +166,12 @@ export const Success = ({ account }: CellSuccessProps<AccountQuery>) => {
 
   const handleDocusign = useCallback(() => {
     if (account.docusignIntegrationStatus !== 'connected') {
-      // const authURL = `${process.env['MEDIAVALET_AUTH_URL']}?response_type=code&client_id=${process.env['MEDIAVALET_CLIENT_ID']}&scope=api%20offline_access&redirect_uri=${process.env['MEDIAVALET_CALLBACK_URL']}`;
-      // window.location = authURL;
+      const SCOPES = ['signature', 'impersonation'].join('+');
+      const consentUrl =
+        `${process.env['DOCUSIGN_OAUTH_SERVER']}/oauth/auth?response_type=code&` +
+        `scope=${SCOPES}&client_id=${process.env['DOCUSIGN_CLIENT_ID']}&` +
+        `redirect_uri=${process.env['DOCUSIGN_CALLBACK_URL']}`;
+      window.location = consentUrl;
     } else {
       updateIntegrationStatus({
         variables: {
@@ -173,7 +181,7 @@ export const Success = ({ account }: CellSuccessProps<AccountQuery>) => {
       });
     }
   }, [
-    account.mediavaletIntegrationStatus,
+    account.docusignIntegrationStatus,
     currentUser.accountId,
     updateIntegrationStatus,
   ]);
@@ -196,28 +204,29 @@ export const Success = ({ account }: CellSuccessProps<AccountQuery>) => {
     updateIntegrationStatus,
   ]);
 
-  const handleEsri = useCallback(() => {
-    if (account.esriIntegrationStatus !== 'connected') {
-      // const authURL = `${process.env['MEDIAVALET_AUTH_URL']}?response_type=code&client_id=${process.env['MEDIAVALET_CLIENT_ID']}&scope=api%20offline_access&redirect_uri=${process.env['MEDIAVALET_CALLBACK_URL']}`;
-      // window.location = authURL;
-    } else {
-      updateIntegrationStatus({
-        variables: {
-          id: currentUser.accountId,
-          input: { esriIntegrationStatus: 'unconnected' },
-        },
-      });
-    }
-  }, [
-    account.esriIntegrationStatus,
-    currentUser.accountId,
-    updateIntegrationStatus,
-  ]);
+  // const handleEsri = useCallback(() => {
+  //   if (account.esriIntegrationStatus !== 'connected') {
+  //     // const authURL = `${process.env['MEDIAVALET_AUTH_URL']}?response_type=code&client_id=${process.env['MEDIAVALET_CLIENT_ID']}&scope=api%20offline_access&redirect_uri=${process.env['MEDIAVALET_CALLBACK_URL']}`;
+  //     // window.location = authURL;
+  //   } else {
+  //     updateIntegrationStatus({
+  //       variables: {
+  //         id: currentUser.accountId,
+  //         input: { esriIntegrationStatus: 'unconnected' },
+  //       },
+  //     });
+  //   }
+  // }, [
+  //   account.esriIntegrationStatus,
+  //   currentUser.accountId,
+  //   updateIntegrationStatus,
+  // ]);
 
   const integrations = [
     {
       title: 'Docusign',
-      description: '',
+      description:
+        'DocuSign is used to approve images for publication by multiple stakeholders.',
       gridArea: 'docusign',
       status: account.docusignIntegrationStatus,
       onPress: handleDocusign,
@@ -235,8 +244,8 @@ export const Success = ({ account }: CellSuccessProps<AccountQuery>) => {
       description:
         'Survey123 Form submissions are collected to gather location data for camera traps in different date ranges.',
       gridArea: 'esri',
-      status: account.esriIntegrationStatus,
-      onPress: handleEsri,
+      status: 'connected', //account.esriIntegrationStatus,
+      onPress: undefined, //handleEsri,
     },
   ];
   return (

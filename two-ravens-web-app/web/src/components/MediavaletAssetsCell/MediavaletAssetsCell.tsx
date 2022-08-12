@@ -1,6 +1,3 @@
-import type { MediavaletAssetsQuery } from 'types/graphql';
-
-import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web';
 import {
   ActionButton,
   Button,
@@ -23,8 +20,13 @@ import {
   View,
 } from '@adobe/react-spectrum';
 import Download from '@spectrum-icons/workflow/Download';
+import type { MediavaletAssetsQuery } from 'types/graphql';
+
 import { Link } from '@redwoodjs/router';
+import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web';
+
 import useProcessImages from 'src/hooks/useProcessImages';
+
 export const QUERY = gql`
   query MediavaletAssetsQuery($categoryId: String!) {
     mediavaletAssets(categoryId: $categoryId) {
@@ -36,26 +38,32 @@ export const QUERY = gql`
 `;
 
 export const Loading = () => (
-  <View width="80vw">
+  <View width="50%">
     <Heading>
-      <Download /> <Text>Camera Downloads Folder</Text>
+      <Download marginBottom="-0.3em" /> <Text>Camera Downloads Folder</Text>
     </Heading>
+    <Divider marginBottom="size-400" height={1} />
+
     <Flex direction="row" alignItems="center">
       <ProgressCircle
         marginEnd="size-200"
         isIndeterminate
         aria-label="Loading Images"
       />
-      <Text>Fetching images from MediaValet</Text>
+      <Text>
+        Checking <em>camera-downloads</em> folder on MediaValet
+      </Text>
     </Flex>
   </View>
 );
 
 export const Empty = () => (
-  <View width="80vw">
+  <View width="50%">
     <Heading>
-      <Download /> <Text>Camera Downloads Folder</Text>
+      <Download marginBottom="-0.3em" /> <Text>Camera Downloads Folder</Text>
     </Heading>
+    <Divider height={1} marginBottom="size-400" />
+
     <p style={{ maxWidth: '40rem' }}>
       There are no unprocessed photos in this camera&lsquo;s downloads folder on
       MediaValet.
@@ -81,10 +89,12 @@ export const Empty = () => (
 );
 
 export const Failure = ({ error }: CellFailureProps) => (
-  <View width="80vw">
+  <View width="50%">
     <Heading>
-      <Download /> <Text>Camera Downloads Folder</Text>
+      <Download marginBottom="-0.3em" /> <Text>Camera Downloads Folder</Text>
     </Heading>
+    <Divider height={1} marginBottom="size-400" />
+
     <p style={{ maxWidth: '40rem' }}>
       The MediaValet downloads folder could not be accessed, there maybe an
       issue with the API.
@@ -117,6 +127,8 @@ function ProcessImagesDialog({
   return (
     <Dialog>
       <Heading>Processing Images</Heading>
+      <Divider />
+
       <Header>
         {complete} of {total}
       </Header>
@@ -161,17 +173,23 @@ export const Success = ({
   // https://hackathonjgi.mediavalet.com/browse/categories/1e5ea909-ae48-44a5-9440-a514c646831a/7dbbb011-05b8-47c2-956a-53e843a6bbc8/full-screen
   return (
     <>
-      <View width="80vw">
+      <View width="50%">
         <Heading>
-          <Download /> <Text>Camera Downloads Folder</Text>
+          <Download marginBottom="-0.3em" />{' '}
+          <Text>Camera Downloads Folder</Text>
         </Heading>
+        <Divider height={1} marginBottom="size-400" />
+
         <p style={{ maxWidth: '40rem' }}>
-          There are <strong>{mediavaletAssets.length}</strong> unprocessed
-          photos in this camera&lsquo;s downloads folder on MediaValet. The
-          photos will eventually be automatically processed by a background job,
-          but you can also manually process them here. It may take a while as
-          the MediaValet API is quite slow and they have to be processed
-          individually, but if you leave the tab open it will work through them.
+          There {mediavaletAssets.length === 1 ? 'is' : 'are'}{' '}
+          <strong>{mediavaletAssets.length}</strong> unprocessed{' '}
+          {mediavaletAssets.length === 1 ? 'photo' : 'photos'} in this
+          camera&lsquo;s downloads folder on MediaValet. The{' '}
+          {mediavaletAssets.length === 1 ? 'photo' : 'photos'} will eventually
+          be automatically processed by a background job, but you can also
+          manually process them here. It may take a while as the MediaValet API
+          is quite slow and they have to be processed individually, but if you
+          leave the tab open it will work through them.
         </p>
         <Flex direction="row" alignItems="center">
           <DialogTrigger isKeyboardDismissDisabled>
@@ -196,7 +214,7 @@ export const Success = ({
         </Flex>
       </View>
       <Grid
-        width="80vw"
+        width="50%"
         marginTop="size-500"
         justifyContent="center"
         columnGap="size-200"

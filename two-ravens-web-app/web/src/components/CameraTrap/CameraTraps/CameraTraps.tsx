@@ -4,99 +4,26 @@ import {
   ActionButton,
   ActionGroup,
   Breadcrumbs,
+  Button,
   Flex,
   Grid,
   Heading,
   Item,
   repeat,
-  StatusLight,
   Text,
   View,
   Well,
+  Link as SpectrumLink,
 } from '@adobe/react-spectrum';
 import Add from '@spectrum-icons/workflow/Add';
-import Camera from '@spectrum-icons/workflow/Camera';
-import CameraRefresh from '@spectrum-icons/workflow/CameraRefresh';
-import humanize from 'humanize-string';
+import Article from '@spectrum-icons/workflow/Article';
+import ImageCheck from '@spectrum-icons/workflow/ImageCheck';
 
 import { Link, navigate, routes } from '@redwoodjs/router';
-import { useMutation } from '@redwoodjs/web';
-import { toast } from '@redwoodjs/web/toast';
 
-import { QUERY } from 'src/components/CameraTrap/CameraTrapsCell';
-import Delete from '@spectrum-icons/workflow/Delete';
-import ImageCheck from '@spectrum-icons/workflow/ImageCheck';
-import Article from '@spectrum-icons/workflow/Article';
 import CameraTrapStatus from 'src/components/CameraTrapStatus/CameraTrapStatus';
 
-const DELETE_CAMERA_TRAP_MUTATION = gql`
-  mutation DeleteCameraTrapMutation($id: String!) {
-    deleteCameraTrap(id: $id) {
-      id
-    }
-  }
-`;
-
-const MAX_STRING_LENGTH = 150;
-
-const formatEnum = (values: string | string[] | null | undefined) => {
-  if (values) {
-    if (Array.isArray(values)) {
-      const humanizedValues = values.map((value) => humanize(value));
-      return humanizedValues.join(', ');
-    } else {
-      return humanize(values as string);
-    }
-  }
-};
-
-const truncate = (text) => {
-  let output = text;
-  if (text && text.length > MAX_STRING_LENGTH) {
-    output = output.substring(0, MAX_STRING_LENGTH) + '...';
-  }
-  return output;
-};
-
-const jsonTruncate = (obj) => {
-  return truncate(JSON.stringify(obj, null, 2));
-};
-
-const timeTag = (datetime) => {
-  return (
-    datetime && (
-      <time dateTime={datetime} title={datetime}>
-        {new Date(datetime).toUTCString()}
-      </time>
-    )
-  );
-};
-
-const checkboxInputTag = (checked) => {
-  return <input type="checkbox" checked={checked} disabled />;
-};
-
 const CameraTrapsList = ({ cameraTraps }) => {
-  const [deleteCameraTrap] = useMutation(DELETE_CAMERA_TRAP_MUTATION, {
-    onCompleted: () => {
-      toast.success('CameraTrap deleted');
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-    // This refetches the query on the list page. Read more about other ways to
-    // update the cache over here:
-    // https://www.apollographql.com/docs/react/data/mutations/#making-all-other-cache-updates
-    refetchQueries: [{ query: QUERY }],
-    awaitRefetchQueries: true,
-  });
-
-  const onDeleteClick = (id) => {
-    if (confirm('Are you sure you want to delete cameraTrap ' + id + '?')) {
-      deleteCameraTrap({ variables: { id } });
-    }
-  };
-
   const onAddNewClick = useCallback(() => {
     navigate(routes.newCameraTrap());
   }, []);
@@ -114,7 +41,7 @@ const CameraTrapsList = ({ cameraTraps }) => {
 
   return (
     <div>
-      <Flex
+      {/* <Flex
         direction="row"
         marginTop="size-500"
         alignContent="stretch"
@@ -132,7 +59,7 @@ const CameraTrapsList = ({ cameraTraps }) => {
             <Text> Add New Camera Trap</Text>
           </ActionButton>
         </View>
-      </Flex>
+      </Flex> */}
       <Grid
         marginTop="size-500"
         justifyContent="center"
@@ -140,44 +67,71 @@ const CameraTrapsList = ({ cameraTraps }) => {
         columns={repeat('auto-fit', 'size-4600')}
         autoRows="auto-fit"
       >
-        {cameraTraps.map((cameraTrap) => (
-          <View
-            backgroundColor="static-white"
-            borderRadius="medium"
-            borderColor="light"
-            borderWidth="thick"
-            key={cameraTrap.id}
-            padding="size-200"
-            width="size-4600"
-            maxWidth="100%"
-            marginBottom="size-500"
-          >
-            <Heading level={2}>
-              <Link to={routes.cameraTrap({ id: cameraTrap.id })}>
-                <Text>{cameraTrap.deviceId}</Text>
-              </Link>
+        <View
+          padding="size-200"
+          width="size-4600"
+          maxWidth="100%"
+          // borderColor="light"
+          // borderWidth="thick"
+          marginBottom="size-500"
+        >
+          <Flex direction="column" alignItems="start" justifyContent="stretch">
+            <Heading level={1} width="100%" marginBottom="size-100">
+              Camera Traps
             </Heading>
-            <Well>
-              This camera has captured{' '}
-              <strong>{cameraTrap.photos.length}</strong>&nbsp;photos across{' '}
-              <strong>{cameraTrap.batches.length}</strong>&nbsp;
-              {cameraTrap.batches.length === 1 ? 'batch' : 'batches'}
-            </Well>
-            <p>
-              <CameraTrapStatus latestEvent={cameraTrap.events[0]} />
-            </p>
-            <ActionGroup onAction={onActionPress}>
+            <View flexGrow={1} maxWidth="size-3600">
+              <p>
+                Add a camera trap here for each physical device in your project,
+                make sure to give each a unique name and to set the name on the
+                device.
+              </p>
+            </View>
+            <Button variant="cta" onPress={onAddNewClick}>
+              <Add />
+              <Text> Add New Camera Trap</Text>
+            </Button>
+          </Flex>
+        </View>
+        {cameraTraps.map((cameraTrap) => (
+          <Link
+            key={cameraTrap.id}
+            to={routes.cameraTrap({ id: cameraTrap.id })}
+            style={{ textDecoration: 'none', color: 'initial' }}
+          >
+            <View
+              backgroundColor="static-white"
+              borderRadius="medium"
+              borderColor="light"
+              borderWidth="thick"
+              padding="size-200"
+              width="size-4600"
+              maxWidth="100%"
+              marginBottom="size-500"
+            >
+              <Heading level={2}>
+                <SpectrumLink>
+                  <Text>{cameraTrap.deviceId}</Text>
+                </SpectrumLink>
+              </Heading>
+              <Well>
+                This camera has captured{' '}
+                <strong>{cameraTrap.photos.length}</strong>&nbsp;photos across{' '}
+                <strong>{cameraTrap.batches.length}</strong>&nbsp;
+                {cameraTrap.batches.length === 1 ? 'batch' : 'batches'}
+              </Well>
+              <p>
+                <CameraTrapStatus latestEvent={cameraTrap.events[0]} />
+              </p>
+              {/* <ActionGroup onAction={onActionPress}>
               <Item key={`view-${cameraTrap.id}`}>
                 <Article /> <Text>View Details</Text>
               </Item>
               <Item key={`viewBatches-${cameraTrap.id}`}>
                 <ImageCheck /> <Text>View Batches</Text>
               </Item>
-              {/* <Item>
-                <Delete />
-              </Item> */}
-            </ActionGroup>
-          </View>
+            </ActionGroup> */}
+            </View>
+          </Link>
         ))}
       </Grid>
     </div>

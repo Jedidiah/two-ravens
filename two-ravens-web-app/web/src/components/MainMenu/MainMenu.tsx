@@ -60,7 +60,11 @@ const AuthenticatedMainMenu = (props: { user: CurrentUser }) => {
           activeClassName="main-menu__link--active"
           to={routes.home()}
         >
-          <img src="/two-ravens.svg" alt="TWO RAVENS" />
+          <img
+            style={{ transform: 'scale(3)' }}
+            src="/two-ravens.svg"
+            alt="TWO RAVENS"
+          />
         </NavLink>
       </View>
       <View></View>
@@ -79,25 +83,26 @@ const AuthenticatedMainMenu = (props: { user: CurrentUser }) => {
         >
           Camera Traps
         </NavLink>
-        <NavLink
+        {/* <NavLink
           className="main-menu__link"
           activeClassName="main-menu__link--active"
           to={routes.cameraTrapBatches()}
         >
           Photo Batches
-        </NavLink>
+        </NavLink> */}
       </View>
       <View></View>
       <View>
-        <NavLink
+        <User />
+        {/* <NavLink
           className="main-menu__link"
           activeClassName="main-menu__link--active"
           to={routes.home()}
         >
           <Text>
-            <User /> {props?.user?.email}
+             {props?.user?.email}
           </Text>
-        </NavLink>
+        </NavLink> */}
         <ActionMenu
           onAction={handleDropdownSelection}
           alignSelf="center"
@@ -134,7 +139,11 @@ const UnAuthenticatedMainMenu = () => {
           activeClassName="main-menu__link--active"
           to={routes.home()}
         >
-          LOGO
+          <img
+            style={{ transform: 'scale(3)' }}
+            src="/two-ravens.svg"
+            alt="TWO RAVENS"
+          />
         </NavLink>
       </View>
       <View></View>

@@ -1,6 +1,0 @@
-{
-  "dsJWTClientId": "c35b9eb4-c7b3-4faf-8b82-e795ae18336d",
-  "impersonatedUserGuid": "16cab284-be44-4b60-a7e3-a45dd97f469c",
-  "privateKeyLocation":  "./private.key",
-  "dsOauthServer": "https://account-d.docusign.com"
-}

@@ -12,16 +12,14 @@ import {
   Grid,
   ActionGroup,
   Item,
-  ActionMenu,
-  MenuTrigger,
-  ActionButton,
-  Menu,
   Picker,
+  Button,
+  Text,
+  repeat,
 } from '@adobe/react-spectrum';
 import { ViewStyleProps } from '@react-types/shared/src/style';
 import ErrorIcon from '@spectrum-icons/illustrations/Error';
 import NoResultsIcon from '@spectrum-icons/illustrations/NoSearchResults';
-import ChevronDown from '@spectrum-icons/workflow/ChevronDown';
 import Location from '@spectrum-icons/workflow/Location';
 import { parse } from 'query-string';
 import type {
@@ -29,18 +27,18 @@ import type {
   CameraTrapBatchesQuery,
   CameraTrapBatchesQueryVariables,
 } from 'types/graphql';
-import type { CameraTrapBatchQueryVariables } from 'types/graphql';
 
-import { navigate, routes, useLocation } from '@redwoodjs/router';
+import { Link, navigate, routes, useLocation } from '@redwoodjs/router';
 import {
   CellSuccessProps,
   CellFailureProps,
   useMutation,
 } from '@redwoodjs/web';
-
-import useUpdateQueryString from 'src/hooks/useUpdateQueryString';
-import LocaleDate from 'src/components/LocaleDate/LocaleDate';
 import { toast } from '@redwoodjs/web/dist/toast';
+
+import LocaleDate from 'src/components/LocaleDate/LocaleDate';
+import useUpdateQueryString from 'src/hooks/useUpdateQueryString';
+import ImageBlock from 'src/components/ImageBlock/ImageBlock';
 
 export const QUERY = gql`
   query CameraTrapBatchesQuery($status: String, $cameraTrapId: String) {
@@ -68,66 +66,31 @@ export const QUERY = gql`
   }
 `;
 
-function ImageBlock(props: {
-  photos: Array<{ __typename?: 'Photo'; id: string; thumb: string } | null>;
-}) {
-  const photos = props.photos.slice(0, 3);
-  return (
-    <ul
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        listStyle: 'none',
-        perspective: '1000px',
-        padding: 0,
-        margin: 0,
-        textIndent: 0,
-      }}
-    >
-      {photos.map((photo, index) => (
-        <li
-          key={photo.id}
-          style={{
-            zIndex: props.photos.length - index + 1,
-            transform: `translateZ(-${175 * (index + index)}px) translateX(-${
-              70 * index
-            }px) rotateY(${(index + 1) * 20}deg)`,
-            filter: `brightness(${1 - index * 0.15})`,
-            background: 'white',
-            padding: '6px 6px 9px 6px',
-            boxShadow: 'rgba(0,0,0,0.3) 0px 3px 2px',
-          }}
-        >
-          <Image
-            alt=""
-            width="size-1600"
-            height="size-1600"
-            src={photo.thumb}
-            objectFit="cover"
-          />
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 function BatchContainer({
   children,
   width = '40rem',
-  background = 'gray-200',
+  background = 'static-white',
+  borderColor = 'light',
+  borderWidth = 'thick',
 }: PropsWithChildren<{
   width?: string;
   background?: ViewStyleProps['backgroundColor'];
+  borderColor?: ViewStyleProps['borderColor'];
+  borderWidth?: ViewStyleProps['borderWidth'];
 }>) {
   return (
     <View
       borderRadius="medium"
-      padding="size-250"
+      // padding="size-250"
       backgroundColor={background}
-      marginBottom={15}
+      // marginBottom={15}
       minHeight="size-1200"
       maxWidth="100%"
       width={width}
+      borderColor={borderColor}
+      borderWidth={borderWidth}
+      padding="size-400"
+      // width="80vw"
     >
       {children}
     </View>
@@ -135,19 +98,33 @@ function BatchContainer({
 }
 
 export const Loading = () => (
-  <BatchContainer background="transparent">
+  <BatchContainer background="transparent" borderColor="transparent">
     <div>Loading...</div>
   </BatchContainer>
 );
 
-export const Empty = ({ cameraTraps, cameraTrapBatches, variables }) => (
+export const Empty = ({
+  cameraTraps,
+  cameraTrapBatches,
+  variables,
+  hideCameraSelector,
+}) => (
   <>
-    <CameraSelector {...{ cameraTraps, cameraTrapBatches, variables }} />
-    <BatchContainer background="transparent">
+    {!hideCameraSelector && (
+      <CameraSelector {...{ cameraTraps, cameraTrapBatches, variables }} />
+    )}
+    <BatchContainer background="transparent" borderColor="transparent">
       <IllustratedMessage>
         <NoResultsIcon />
-        <Heading>List Empty</Heading>
-        <Content>There are no batches with this status</Content>
+        <Heading>No Batches</Heading>
+        <Content>
+          <p>There are no batches of photos for this camera yet.</p>
+          <p>
+            Batches will appear here once there is a matching set of events
+            collected from Survey123 for this camera. i.e. A placement followed
+            by a collection or memory card change.
+          </p>
+        </Content>
       </IllustratedMessage>
     </BatchContainer>
   </>
@@ -158,10 +135,13 @@ export const Failure = ({
   cameraTrapBatches,
   variables,
   error,
+  hideCameraSelector,
 }: CellFailureProps) => (
   <>
-    <CameraSelector {...{ cameraTraps, cameraTrapBatches, variables }} />
-    <BatchContainer background="transparent">
+    {!hideCameraSelector && (
+      <CameraSelector {...{ cameraTraps, cameraTrapBatches, variables }} />
+    )}
+    <BatchContainer background="transparent" borderColor="transparent">
       <IllustratedMessage>
         <ErrorIcon />
         <Heading>Failed to load batch</Heading>
@@ -191,10 +171,6 @@ function CameraSelector({ cameraTraps, cameraTrapBatches, variables }) {
     [setCamera, updateQuery]
   );
 
-  const cameraNameForId = (id: string | number) =>
-    id === 'all'
-      ? 'All Camera Traps'
-      : cameraTraps.find((t) => t.id === id).deviceId;
   return (
     <Flex marginBottom="size-250">
       <p>
@@ -257,10 +233,11 @@ function CameraBatch({ cameraTrapBatch }) {
     },
     [cameraTrapBatch.id, cameraTrapBatch.cameraTrap.id]
   );
+
   return (
     <BatchContainer key={cameraTrapBatch.id}>
       <Grid
-        areas={['content header', 'content sidebar', 'content footer']}
+        areas={['content header', 'content sidebar', 'footer footer']}
         columns={['15em', 'auto']}
         rows={['auto', 'auto']}
         gap="size-100"
@@ -294,12 +271,27 @@ function CameraBatch({ cameraTrapBatch }) {
           <ImageBlock photos={cameraTrapBatch.photos} />
         </View>
         <Footer gridArea="footer">
-          <Flex alignItems="start" justifyContent="center">
-            <ActionGroup onAction={handleMenuAction}>
-              <Item key="startApproval">Start Approval</Item>
-              <Item key="viewBatch">Batch Details</Item>
-              <Item key="viewCamera">View Camera Trap</Item>
+          <Flex
+            alignItems="center"
+            alignContent="center"
+            justifyContent="space-between"
+            marginTop="size-200"
+          >
+            <ActionGroup onAction={handleMenuAction} alignSelf="center">
+              <Item key="viewBatch">View Batch Details</Item>
             </ActionGroup>
+            <View>
+              <Link
+                to={routes.approveCameraTrapBatch({ id: cameraTrapBatch.id })}
+              >
+                <Button
+                  variant="cta"
+                  isDisabled={cameraTrapBatch.photos.length === 0}
+                >
+                  <Text>Start Approval</Text>
+                </Button>
+              </Link>
+            </View>
           </Flex>
         </Footer>
       </Grid>
@@ -311,19 +303,31 @@ export const Success = ({
   cameraTrapBatches,
   cameraTraps,
   variables,
-}: CellSuccessProps<
-  CameraTrapBatchesQuery,
-  CameraTrapBatchesQueryVariables
->) => {
+  hideCameraSelector = false,
+}: CellSuccessProps<CameraTrapBatchesQuery, CameraTrapBatchesQueryVariables> & {
+  hideCameraSelector: boolean;
+}) => {
   return (
     <>
-      <CameraSelector {...{ cameraTraps, cameraTrapBatches, variables }} />
-      {cameraTrapBatches.map((cameraTrapBatch: CameraTrapBatch) => (
-        <CameraBatch
-          key={cameraTrapBatch.id}
-          cameraTrapBatch={cameraTrapBatch}
-        />
-      ))}
+      {!hideCameraSelector && (
+        <CameraSelector {...{ cameraTraps, cameraTrapBatches, variables }} />
+      )}
+      <Grid
+        width="80vw"
+        marginTop="size-500"
+        justifyContent="center"
+        columnGap="size-200"
+        columns={repeat('auto-fit', '40rem')}
+        autoRows="auto-fit"
+        rowGap="size-200"
+      >
+        {cameraTrapBatches.map((cameraTrapBatch: CameraTrapBatch) => (
+          <CameraBatch
+            key={cameraTrapBatch.id}
+            cameraTrapBatch={cameraTrapBatch}
+          />
+        ))}
+      </Grid>
     </>
   );
 };

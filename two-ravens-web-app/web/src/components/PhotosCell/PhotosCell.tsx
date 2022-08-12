@@ -1,11 +1,12 @@
 import type { PhotosQuery } from 'types/graphql';
+
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web';
 
 export const QUERY = gql`
   query PhotosQuery {
     photos {
       id
-      thumbnail
+      thumb
       title
       altText
       description

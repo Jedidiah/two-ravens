@@ -42,6 +42,10 @@ export const QUERY = gql`
       mediavaletCategoryId
       mediavaletDownloadsFolderId
     }
+    cameraTraps {
+      id
+      deviceId
+    }
   }
 `;
 
@@ -55,6 +59,10 @@ export const Failure = ({ error }: CellFailureProps) => (
 
 export const Success = ({
   cameraTrap,
-}: CellSuccessProps<FindCameraTrapById>) => {
-  return <CameraTrap cameraTrap={cameraTrap} />;
+  cameraTraps,
+  tab,
+}: CellSuccessProps<FindCameraTrapById> & { tab?: string }) => {
+  return (
+    <CameraTrap cameraTrap={cameraTrap} cameraTraps={cameraTraps} tab={tab} />
+  );
 };

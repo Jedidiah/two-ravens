@@ -13,8 +13,8 @@ const CameraTrapStatus = (props: { latestEvent: Partial<CameraTrapEvent> }) => {
     if (!cameraProcedure || cameraProcedure === 'camera_removed') {
       return { variant: 'neutral', label: 'RESTING' };
     }
-    if (cameraProcedure === 'stolen') {
-      return { variant: 'negative', label: 'NOT WORKING' };
+    if (cameraProcedure === 'camera_stolen') {
+      return { variant: 'negative', label: 'STOLEN / BROKEN' };
     }
     return { variant: 'positive', label: 'ACTIVE' };
   }, [cameraProcedure]);

@@ -7,7 +7,7 @@ import type {
 import { db } from 'src/lib/db';
 
 export const cameraTraps: QueryResolvers['cameraTraps'] = () => {
-  return db.cameraTrap.findMany();
+  return db.cameraTrap.findMany({ orderBy: { deviceId: 'asc' } });
 };
 
 export const cameraTrap: QueryResolvers['cameraTrap'] = ({ id }) => {

@@ -1,12 +1,8 @@
-import type { QueryResolvers, MutationResolvers } from 'types/graphql';
-
-import { db } from 'src/lib/db';
-import { mediavaletApi, mediavaletApiBulkAction } from 'src/lib/mediavaletAuth';
-import { logger } from 'src/lib/logger';
 import parse from 'date-fns/parse';
-import { cameraTrapBatch } from '../cameraTrapBatches/cameraTrapBatches';
-import { cameraTrap } from '../cameraTraps/cameraTraps';
-import { stringify } from 'query-string';
+import type { QueryResolvers } from 'types/graphql';
+
+import { logger } from 'src/lib/logger';
+import { mediavaletApi } from 'src/lib/mediavaletAuth';
 
 function formatAsset(asset) {
   return {

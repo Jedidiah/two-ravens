@@ -51,7 +51,6 @@ model CameraTrap {
   events       CameraTrapEvent[]
   photos       Photo[]
 
-  // mediavaletCategory          MediavaletCategory? @relation(fields: [mediavaletCategoryId], references: [id])
   mediavaletCategoryId        String? @unique
   mediavaletDownloadsFolderId String? @unique
   mediavaletProcessedFolderId String? @unique

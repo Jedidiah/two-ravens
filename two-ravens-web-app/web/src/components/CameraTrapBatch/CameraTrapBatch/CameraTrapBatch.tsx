@@ -76,14 +76,11 @@ const CameraTrapBatch = ({ cameraTrapBatch }) => {
         style={{
           width: '100vw',
           maxWidth: '100%',
-          height: '90vh',
-          border: 'none',
+          height: '100%',
+          minHeight: '70vh',
         }}
       >
         <Document title="Image Approval">
-          <Page>
-            <Text>Hello {cameraTrapBatch.id}</Text>
-          </Page>
           {cameraTrapBatch.photos.map((photo, index) => {
             return (
               <PdfPhotoPage

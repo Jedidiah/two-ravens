@@ -4,7 +4,8 @@
     "packages": [
       "api",
       "web",
-      "packages/*"
+      "packages/*",
+      "scripts"
     ]
   },
   "devDependencies": {

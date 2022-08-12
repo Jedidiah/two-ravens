@@ -24,6 +24,8 @@ const CameraTrapQrCode = (props: {
     QRCode.toDataURL(
       canvasRef.current,
       `arcgis-survey123://?${qs}`,
+      // For video demo so random people don't scan from video and submit forms
+      // 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
       { scale: 4, margin: 8 },
       function (error, data: string) {
         if (error) console.error(error);
